@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRC Control Room | Portfolio Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F1F4F3; --paper-raised: #FFFFFF; --paper-sunken: #E7EBE9;
+  --ink: #16212B; --ink-soft: #57646F; --ink-faint: #8B97A1;
+  --line: #DCE3E1; --line-strong: #C4CDCA;
+  --accent: #24476B; --accent-soft: #E3EBF3; --accent-strong: #17324D;
+  --good: #2E7D53; --good-soft: #E3F2E9;
+  --high: #E0432B; --high-soft: #FCE7E2;
+  --low: #6B7785; --low-soft: #E9ECEE;
+  --focus: #2469C7;
+  --shadow: 0 1px 2px rgba(22,33,43,.06), 0 8px 24px rgba(22,33,43,.06);
+  --font-ui: 'Libre Franklin', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1117; --paper-raised: #171E27; --paper-sunken: #121820;
+    --ink: #E9EEF1; --ink-soft: #A2AFB9; --ink-faint: #70808B;
+    --line: #2A343D; --line-strong: #3B4650;
+    --accent: #8FB4E0; --accent-soft: #1E3040; --accent-strong: #C3DBF3;
+    --good: #67C594; --good-soft: #17301F;
+    --high: #FF7A5C; --high-soft: #3A2016;
+    --low: #93A0AD; --low-soft: #1C242C;
+    --focus: #74AAEB;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1117; --paper-raised: #171E27; --paper-sunken: #121820;
+  --ink: #E9EEF1; --ink-soft: #A2AFB9; --ink-faint: #70808B;
+  --line: #2A343D; --line-strong: #3B4650;
+  --accent: #8FB4E0; --accent-soft: #1E3040; --accent-strong: #C3DBF3;
+  --good: #67C594; --good-soft: #17301F;
+  --high: #FF7A5C; --high-soft: #3A2016;
+  --low: #93A0AD; --low-soft: #1C242C;
+  --focus: #74AAEB;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
+}
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; line-height: 1.45; }
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 20px 96px; }
+a { color: inherit; }
+h1, h2, h3 { text-wrap: balance; font-family: var(--font-ui); margin: 0; }
+::selection { background: var(--accent-soft); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+button, select, input, textarea { font: inherit; }
+
+.topstripe { height: 5px; display: flex; }
+.topstripe span { flex: 1 1 0; }
+
+header.top { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--line); padding: 20px 20px 0; }
+header.top .inner { max-width: 940px; margin: 0 auto; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
+.title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; justify-content: space-between; }
+h1.page-title { font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+.updated { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); white-space: nowrap; }
+
+.overall { margin-top: 14px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.overall-bar { flex: 1 1 220px; height: 8px; border-radius: 5px; background: var(--paper-sunken); overflow: hidden; border: 1px solid var(--line); }
+.overall-bar > span { display: block; height: 100%; background: var(--accent); border-radius: 5px 0 0 5px; transition: width .25s ease; }
+.overall-stat { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.overall-stat b { color: var(--ink); font-weight: 600; }
+.hi-flag { font-family: var(--font-mono); font-size: 12px; color: var(--high); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.stackbar { flex: 1 1 220px; height: 8px; border-radius: 5px; overflow: hidden; border: 1px solid var(--line); display: flex; background: var(--paper-sunken); }
+.stackbar span { height: 100%; }
+.reg-legend { display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+.reg-legend .sw { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.reg-legend .sw i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+.quicknav { display: flex; gap: 6px; overflow-x: auto; margin-top: 14px; padding-bottom: 2px; scrollbar-width: thin; }
+.quicknav a { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); background: var(--paper-raised); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px 5px 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.quicknav a:hover { border-color: var(--line-strong); color: var(--ink); }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; display: inline-block; }
+
+.tabbar { display: flex; gap: 4px; margin-top: 18px; }
+.tabbar button { font-family: var(--font-ui); font-size: 13.5px; font-weight: 600; padding: 9px 16px; border-radius: 9px 9px 0 0; border: 1px solid var(--line); border-bottom: none; background: var(--paper-sunken); color: var(--ink-soft); cursor: pointer; }
+.tabbar button .cnt { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-left: 6px; }
+.tabbar button[aria-selected="true"] { background: var(--paper); color: var(--ink); position: relative; top: 1px; }
+.tabbar button[aria-selected="true"] .cnt { color: var(--ink-soft); }
+
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 20px 0 22px; }
+.toolbar input[type="search"] { flex: 1 1 200px; min-width: 0; font-family: var(--font-ui); font-size: 14px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); }
+.toolbar input[type="search"]::placeholder { color: var(--ink-faint); }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+.seg button { font-family: var(--font-ui); font-size: 13px; font-weight: 500; padding: 8px 12px; background: var(--paper-raised); color: var(--ink-soft); border: none; border-right: 1px solid var(--line); cursor: pointer; }
+.seg button:last-child { border-right: none; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-strong); }
+.toolbar select { font-family: var(--font-ui); font-size: 13px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); flex: 0 0 auto; }
+
+.domain, .reg-category { margin-bottom: 30px; scroll-margin-top: 230px; }
+.domain-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.domain-name, .reg-category-head { display: flex; align-items: center; gap: 9px; }
+.domain-name .dot, .reg-category-head .dot { width: 11px; height: 11px; }
+.domain-head h2, .reg-category-head h2 { font-size: 18px; font-weight: 700; letter-spacing: -.005em; }
+.domain-blurb { margin: 4px 0 0 20px; font-size: 13.5px; color: var(--ink-soft); max-width: 58ch; }
+.fw-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 0 20px; }
+.fw-chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: .03em; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper-sunken); color: var(--ink-soft); cursor: pointer; }
+.fw-chip:hover { border-color: var(--accent); color: var(--accent); }
+.domain-frac { text-align: right; flex: 0 0 auto; }
+.domain-frac .num { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.domain-bar { width: 120px; height: 6px; border-radius: 4px; background: var(--paper-sunken); border: 1px solid var(--line); overflow: hidden; margin-top: 5px; margin-left: auto; }
+.domain-bar > span { display: block; height: 100%; }
+.domain.empty .domain-bar { display: none; }
+.reg-category-head { margin-bottom: 10px; }
+.reg-category-count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); margin-left: auto; }
+
+.tasklist, .reg-list { list-style: none; margin: 0; padding: 0; background: var(--paper-raised); border: 1px solid var(--line); border-left-width: 4px; border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+.task-row, .reg-row { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.task-row:last-child, .reg-row:last-child { border-bottom: none; }
+.task-row.done { background: var(--paper-sunken); }
+.task-row.hidden-filtered, .reg-row.hidden-filtered { display: none; }
+.task-main { display: flex; align-items: flex-start; gap: 10px; }
+
+.chk { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-raised); cursor: pointer; position: relative; }
+.chk:checked { background: var(--good); border-color: var(--good); }
+.chk:checked::after { content: ""; position: absolute; left: 5px; top: 1px; width: 4px; height: 9px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(40deg); }
+
+.task-body { flex: 1 1 auto; min-width: 0; }
+.task-text-row { display: flex; align-items: flex-start; gap: 8px; }
+.task-text { font-size: 14.5px; color: var(--ink); flex: 1 1 auto; cursor: pointer; }
+.task-row.done .task-text { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+.task-meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+
+.tag { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; border: 1px solid transparent; }
+.tag.area { color: var(--accent-strong); background: var(--accent-soft); border-color: var(--accent-soft); }
+.tag.cadence { color: var(--ink-soft); background: var(--paper-sunken); border-color: var(--line); }
+.tag.prio-high { color: var(--high); background: var(--high-soft); font-weight: 600; }
+.tag.prio-med { color: var(--ink-soft); background: var(--paper-sunken); }
+.tag.prio-low { color: var(--low); background: var(--low-soft); }
+
+.expand-btn { flex: 0 0 auto; background: none; border: none; color: var(--ink-faint); cursor: pointer; font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+.expand-btn:hover { color: var(--accent); background: var(--accent-soft); }
+.expand-btn .chev { display: inline-block; transition: transform .15s ease; }
+.task-row.expanded .expand-btn .chev, .reg-row.expanded .expand-btn .chev { transform: rotate(90deg); }
+
+.detail, .reg-detail { margin-top: 10px; padding: 12px 14px; border-radius: 8px; font-size: 13px; }
+.detail { margin-left: 28px; background: color-mix(in srgb, var(--domain, var(--accent)) 10%, var(--paper-raised)); border: 1px solid color-mix(in srgb, var(--domain, var(--accent)) 25%, var(--line)); }
+.reg-detail { background: color-mix(in srgb, var(--cat, var(--accent)) 9%, var(--paper-raised)); border: 1px solid color-mix(in srgb, var(--cat, var(--accent)) 24%, var(--line)); }
+.detail dt, .reg-detail dt { font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); margin: 10px 0 3px; }
+.detail dt:first-child, .reg-detail dt:first-child { margin-top: 0; }
+.detail dd, .reg-detail dd { margin: 0; color: var(--ink); }
+.detail ol, .reg-detail ol { margin: 4px 0 0; padding-left: 18px; }
+.detail li, .reg-detail li { margin-bottom: 3px; color: var(--ink); }
+.reg-detail textarea { width: 100%; margin-top: 4px; font-family: var(--font-ui); font-size: 13px; padding: 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); resize: vertical; min-height: 48px; }
+
+.td-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 2px; }
+.td-grid > div dt { margin-top: 0; }
+@media (max-width: 640px) { .td-grid { grid-template-columns: 1fr; } }
+.tool-note { margin-top: 12px; padding: 10px 12px; border-radius: 7px; background: var(--paper-sunken); border: 1px dashed var(--line-strong); }
+.tool-note .tool-label { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-strong); margin-bottom: 4px; }
+.tool-note .tool-label i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-strong); display: inline-block; }
+.tool-note p { margin: 0; color: var(--ink); }
+.cat-note { margin: 4px 0 0 20px; font-size: 12px; color: var(--ink-faint); font-style: italic; max-width: 62ch; }
+
+.del-btn { flex: 0 0 auto; background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 15px; line-height: 1; padding: 4px 6px; border-radius: 6px; margin-top: 1px; }
+.del-btn:hover { color: var(--high); background: var(--high-soft); }
+
+.empty-note { padding: 18px 14px; font-size: 13.5px; color: var(--ink-faint); }
+
+.add-row { display: flex; gap: 8px; padding: 10px 12px; flex-wrap: wrap; align-items: center; background: var(--paper-sunken); }
+.add-row input[type="text"] { flex: 1 1 200px; min-width: 0; font-family: var(--font-ui); font-size: 13.5px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); }
+.add-row select { font-family: var(--font-ui); font-size: 12.5px; padding: 7px 8px; border-radius: 7px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); flex: 0 0 auto; }
+.add-row button.add-btn { font-family: var(--font-ui); font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 7px; border: 1px solid var(--domain, var(--accent)); background: var(--domain, var(--accent)); color: #fff; cursor: pointer; flex: 0 0 auto; }
+.add-row button.add-btn:hover { filter: brightness(0.92); }
+
+.reg-head-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reg-name-wrap { flex: 1 1 auto; min-width: 180px; cursor: pointer; }
+.reg-name { font-weight: 600; font-size: 14.5px; }
+.reg-code { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); margin-left: 6px; }
+.reg-status-select { font-family: var(--font-ui); font-size: 12px; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-sunken); color: var(--ink); flex: 0 0 auto; }
+.reg-row.flash { animation: flashbg 1.8s ease; }
+@keyframes flashbg { 0% { background: color-mix(in srgb, var(--cat, var(--accent)) 30%, var(--paper-raised)); } 100% { background: transparent; } }
+
+.banner { font-family: var(--font-mono); font-size: 12px; color: var(--high); background: var(--high-soft); border: 1px solid var(--high-soft); border-radius: 8px; padding: 8px 12px; margin: 12px 0; }
+
+footer.note { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
+
+@media (max-width: 560px) {
+  h1.page-title { font-size: 21px; }
+  .domain-frac { text-align: left; }
+  .domain-bar { margin-left: 0; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .seg { align-self: flex-start; }
+  .detail, .reg-detail { margin-left: 0; }
+  .tabbar button { padding: 8px 11px; font-size: 12.5px; }
+}
+
+/* Recruiter-facing portfolio landing */
+.portfolio-hero { max-width: 940px; margin: 0 auto; padding: 72px 20px 56px; }
+.portfolio-kicker { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+.portfolio-hero h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.02; letter-spacing: -.035em; max-width: 780px; }
+.portfolio-lead { margin: 20px 0 0; max-width: 760px; font-size: 18px; color: var(--ink-soft); line-height: 1.65; }
+.portfolio-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:28px; }
+.portfolio-btn { display:inline-flex; align-items:center; text-decoration:none; border-radius:8px; padding:10px 15px; font-weight:700; font-size:13px; border:1px solid var(--accent); }
+.portfolio-btn.primary { background:var(--accent); color:#fff; }
+.portfolio-btn.secondary { background:var(--paper-raised); color:var(--accent-strong); }
+.portfolio-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:42px; }
+.portfolio-card { background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:var(--shadow); }
+.portfolio-card h2 { font-size:14px; margin-bottom:8px; }
+.portfolio-card p { margin:0; color:var(--ink-soft); font-size:13px; line-height:1.55; }
+.portfolio-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+.portfolio-tags span { font-family:var(--font-mono); font-size:9.5px; border:1px solid var(--line); background:var(--paper-sunken); border-radius:999px; padding:3px 7px; color:var(--ink-soft); }
+.portfolio-disclaimer { margin-top:18px; padding:13px 15px; border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:7px; font-size:12.5px; color:var(--ink-soft); line-height:1.55; }
+.demo-divider { max-width:940px; margin:0 auto; padding:0 20px 20px; }
+.demo-divider div { border-top:1px solid var(--line); padding-top:18px; font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); }
+@media (max-width:760px){ .portfolio-hero{padding-top:48px}.portfolio-grid{grid-template-columns:1fr}.portfolio-lead{font-size:16px} }
+
+</style>
+</head>
+<body>
+<section class="portfolio-hero" id="about-project">
+  <div class="portfolio-kicker">Personal GRC Portfolio · Interactive Case Study</div>
+  <h1>GRC Control Room</h1>
+  <p class="portfolio-lead">A practical governance, risk and compliance operating model designed to show how a modern GRC programme can translate responsibilities into repeatable workflows, accountable ownership, measurable progress and audit-ready evidence.</p>
+  <div class="portfolio-actions">
+    <a class="portfolio-btn primary" href="#live-demo">Explore the live demo ↓</a>
+    <a class="portfolio-btn secondary" href="#project-notes">About this project</a>
+  </div>
+  <div class="portfolio-grid" id="project-notes">
+    <article class="portfolio-card"><h2>The problem</h2><p>GRC work is often fragmented across spreadsheets, tickets, evidence requests and stakeholder follow-ups. This prototype brings the operating rhythm into one structured view.</p></article>
+    <article class="portfolio-card"><h2>What this demonstrates</h2><p>Risk management, audit readiness, third-party risk, access governance, control monitoring, policy operations, regulatory tracking and control-owner enablement.</p><div class="portfolio-tags"><span>GRC</span><span>Risk</span><span>Audit</span><span>TPRM</span><span>Controls</span></div></article>
+    <article class="portfolio-card"><h2>How to explore it</h2><p>Use the Task Tracker and Regulatory Compliance tabs below. Search and filter the programme, expand “What &amp; how” for implementation detail, and interact with task/status controls.</p></article>
+  </div>
+  <div class="portfolio-disclaimer"><strong>Portfolio disclaimer.</strong> This is a personal demonstration project using illustrative programme data and workflows. It does not contain confidential employer information and should not be treated as legal, regulatory or certification advice. Product/tool references are illustrative examples of how workflows could be operationalised.</div>
+</section>
+<div class="demo-divider" id="live-demo"><div>Interactive prototype · GRC operating tracker</div></div>
+<div id="app"></div>
+<script id="state-data" type="application/json">{}</script>
+<script id="logic">
+(function () {
+  "use strict";
+
+  var STATE = {"domains": [{"id": "ops", "name": "Day-to-Day GRC Operations", "color": "#0E9C97", "blurb": "User access reviews and certifications, security awareness and phishing/deepfake simulations, JML tracking, and policy or control exception triage.", "tasks": [{"id": "ops-1", "text": "Set UAR cadence \u2014 quarterly for privileged/critical systems, semi-annual for standard access \u2014 and publish a review calendar", "priority": "high", "cadence": "quarterly", "done": false, "expectation": "Every in-scope system has a written review frequency, and reviewers know their due dates before the quarter starts.", "build": "A UAR calendar (spreadsheet or GRC-platform module) listing each system, tier, cadence, and next-due date.", "steps": ["List every system that touches production data or credentials, and tag each by criticality", "Set cadence per tier: quarterly for privileged/critical, semi-annual for standard", "Assign a named reviewer (usually the system/app owner) to each system", "Publish the calendar and pre-book reviewer time on their calendars a week ahead of each due date"], "area": "Access", "trigger": "Start of each fiscal year, or a new system entering scope", "deadline": "Calendar published before Q1 begins; no system goes a full year without an assigned cadence", "tool": "Anecdotes: build the review calendar from the User Access Reviews module \u2014 it inherits your connected systems from the Data Engine so newly connected apps default onto the schedule automatically."}, {"id": "ops-2", "text": "Run quarterly access certifications with system and app owners; drive sign-off and exceptions to closure", "priority": "high", "cadence": "quarterly", "done": false, "expectation": "Every reviewer has certified their user list on time, with every \u201crevoke\u201d access change actually completed and evidenced.", "build": "An access certification tracker (one row per system per cycle) with reviewer, decision, revoke-completion date, and evidence link.", "steps": ["Pull the current user/entitlement list per system from the source of truth", "Send it to the owner with a clear deadline and simple approve/flag instructions", "Chase outstanding reviews at the halfway mark, not just at the deadline", "For every \u201crevoke\u201d decision, confirm the access was actually removed and capture the ticket as evidence"], "area": "Access", "trigger": "Each system's scheduled UAR due date arriving", "deadline": "Reviewer sign-off within the cycle window (typically 10 business days); revokes actioned within 5 business days of decision", "tool": "Anecdotes: run the cycle natively in User Access Reviews \u2014 it pulls the live entitlement list via the Data Engine, routes it to the assigned owner, and stores the signed decision in the Evidence Pool automatically."}, {"id": "ops-3", "text": "Build and maintain a critical-systems access matrix mapping roles to standing privileged access", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "Anyone can answer \u201cwho has standing privileged access and why\u201d in minutes, not days.", "build": "A role-to-access matrix (spreadsheet or IdP-integrated view) covering every critical system's privileged roles.", "steps": ["Enumerate privileged roles per critical system (admin, superuser, break-glass)", "Map each role to the people currently holding it and the business justification", "Flag any access with no clear justification for follow-up", "Review and refresh the matrix each time a UAR cycle runs"], "area": "Access", "trigger": "New critical system added, or a UAR cycle completing", "deadline": "Refreshed within 2 weeks of any UAR cycle for that system", "tool": "Anecdotes: build a live matrix with Data Studio joining IdP privileged-role data across connected systems, rather than maintaining it by hand."}, {"id": "ops-4", "text": "Stand up quarterly phishing + deepfake/vishing simulations with role-based scenarios \u2014 finance wire fraud, HR credential harvest, executive impersonation", "priority": "high", "cadence": "quarterly", "done": false, "expectation": "Every employee has been tested across at least one realistic channel each quarter, with role-specific scenarios for the highest-risk teams.", "build": "A simulation program plan: channels covered (email, voice, video, SMS), scenario library by role, and a testing calendar.", "steps": ["Pick a simulation platform that covers email plus at least voice/vishing", "Build 2\u20133 scenarios per high-risk role \u2014 finance wire transfer, HR new-hire credential request, exec impersonation", "Schedule sends so no single week overlaps two simulations for the same group", "Route failures straight into a 3\u20135 minute corrective micro-lesson triggered automatically"], "area": "Awareness", "trigger": "Start of each quarter (simulation calendar)", "deadline": "One simulation per channel per quarter, minimum; role-based scenarios refreshed every 2 cycles so they don't go stale"}, {"id": "ops-5", "text": "Track simulation failure rate, time-to-report, and phish-report usage by team; flag repeat clickers for coaching", "priority": "med", "cadence": "monthly", "done": false, "expectation": "You can name, every month, which teams are most at risk and who needs 1:1 coaching \u2014 not just an aggregate click rate.", "build": "A monthly awareness scorecard: failure rate, median time-to-report, and report-button usage, broken out by department.", "steps": ["Export simulation results monthly and segment by team and role", "Calculate time-to-report alongside failure rate \u2014 both matter", "Identify repeat clickers (2+ fails in a rolling quarter) for direct coaching", "Share the scorecard with team leads, not just security"], "area": "Awareness", "trigger": "Each simulation send completing", "deadline": "Scorecard published within 5 business days of a simulation closing", "tool": "Anecdotes: no native phishing simulator \u2014 pipe your simulation platform's results into the Data Engine via Data Studio so failure/report-rate metrics sit in the same Evidence Pool as everything else, instead of a separate spreadsheet."}, {"id": "ops-6", "text": "Run annual company-wide security awareness training with completion tracking and manager escalation for overdue staff", "priority": "high", "cadence": "annual", "done": false, "expectation": "100% completion before the compliance deadline, with a clear escalation trail for anyone who lapses.", "build": "An annual training campaign with a completion dashboard and an automated manager-escalation workflow.", "steps": ["Select or refresh training content aligned to your framework requirements", "Launch with a firm deadline and calendar reminders at 2 weeks, 1 week, and 2 days out", "Auto-escalate overdue staff to their manager after the deadline", "Certify and archive completion records as audit evidence"], "area": "Awareness", "trigger": "Start of the annual training window (set by policy)", "deadline": "100% completion by the compliance deadline; escalation fires automatically at day+1 overdue", "tool": "Anecdotes: ingest LMS completion exports via Data Studio and use a Custom Analysis Rule to flag overdue staff into Findings Management for manager escalation."}, {"id": "ops-7", "text": "Automate joiner/mover/leaver triggers from HRIS to provisioning and deprovisioning; audit for orphaned accounts", "priority": "high", "cadence": "monthly", "done": false, "expectation": "Access is granted and revoked the same day HR status changes \u2014 no manual tickets, no orphaned accounts left behind.", "build": "An HRIS-to-IdP automation (workflow tool or native integration) plus a monthly orphaned-account audit report.", "steps": ["Map every HRIS status change (hire, role change, termination) to the access actions it should trigger", "Automate provisioning/deprovisioning via your IdP or a workflow tool \u2014 remove manual ticket dependency where possible", "Run a monthly reconciliation: active directory/IdP accounts vs. active HRIS records", "Investigate and close every orphaned account found"], "area": "JML", "trigger": "Any HRIS status change \u2014 hire, role change, termination", "deadline": "Leaver deprovisioning same business day; joiner provisioning within 1\u20132 business days", "tool": "Anecdotes: connect HRIS and IdP through the Data Engine and build an Agent Studio agent that reconciles HRIS status against IdP account state, flagging mismatches as Findings automatically."}, {"id": "ops-8", "text": "Maintain a JML SLA dashboard (time-to-provision, time-to-revoke) and escalate breaches", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "You know your actual provisioning/deprovisioning speed, not just the target \u2014 and breaches get caught the same week.", "build": "A JML SLA dashboard tracking time-to-provision and time-to-revoke against target (e.g. same-day for leavers).", "steps": ["Define SLA targets \u2014 typically same-day for leaver deprovisioning, 1\u20132 days for joiner provisioning", "Instrument the JML workflow to timestamp each stage", "Build a simple dashboard (spreadsheet or BI tool) showing SLA attainment over time", "Set an alert for any leaver deprovisioning that breaches 24 hours"], "area": "JML", "trigger": "Ongoing \u2014 every JML event", "deadline": "Reviewed monthly; any breach investigated within 3 business days", "tool": "Anecdotes: expose time-to-provision/time-to-revoke as a Data Studio view over the same JML data feeding ops-7, rather than a separate manual log."}, {"id": "ops-9", "text": "Stand up a policy/control exception intake and approval workflow with risk-based expiry dates", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "No exception exists without a named approver, a documented risk rationale, and an expiry date \u2014 nothing lives forever by default.", "build": "An exception request form + approval workflow (ticketing tool or GRC platform module) with mandatory risk rating and expiry.", "steps": ["Build an intake form capturing the control being excepted, business reason, compensating controls, and requested duration", "Route requests to a risk-appropriate approver (higher risk = more senior sign-off)", "Set a mandatory expiry date scaled to risk \u2014 shorter for higher-risk exceptions", "Log every approved exception in a central register"], "area": "Exceptions", "trigger": "A control owner or system owner requests a deviation from policy", "deadline": "Approval decision within 5 business days of request; expiry date set at approval, never open-ended", "tool": "Anecdotes: house exception requests as Findings in Findings Management, with an Agent Studio automation to flag or auto-expire items past their approved date."}, {"id": "ops-10", "text": "Review open exceptions monthly; chase expired ones to closure or re-approval", "priority": "med", "cadence": "monthly", "done": false, "expectation": "The exception register never quietly accumulates expired, forgotten entries \u2014 every item is either closed or consciously re-approved.", "build": "A monthly exception review checklist run against the exception register.", "steps": ["Pull the full open-exceptions list each month", "Flag anything past or nearing its expiry date", "Chase the owner for closure evidence or a re-approval request", "Report aging exceptions (especially high-risk, overdue ones) to leadership"], "area": "Exceptions", "trigger": "Monthly exception register review", "deadline": "Every exception is either closed or re-approved within 10 business days of its expiry date", "tool": "Anecdotes: filter Findings Management to open exceptions nearing or past expiry \u2014 no separate tracker needed."}], "frameworks": ["SOC2", "ISO27001", "NIST-CSF", "GDPR"]}, {"id": "risk", "name": "Risk Management Program", "color": "#7C5CFC", "blurb": "Annual and ad-hoc risk assessments, the risk register, remediation with risk owners, and issues tracked through to closure.", "tasks": [{"id": "risk-1", "text": "Build the risk register with a consistent taxonomy \u2014 likelihood \u00d7 impact, inherent vs. residual", "priority": "high", "cadence": "annual", "done": false, "expectation": "Every risk in the register is scored the same way, so risks can genuinely be compared and ranked against each other.", "build": "A risk register (spreadsheet or GRC-platform module) with a fixed taxonomy: category, likelihood, impact, inherent score, controls, residual score.", "steps": ["Define a likelihood and impact scale (e.g. 1\u20135) with clear, written criteria for each level", "Define risk categories relevant to the business (security, privacy, operational, third-party, etc.)", "Score each identified risk inherent (before controls) and residual (after controls)", "Store scoring criteria alongside the register so future scoring stays consistent"], "trigger": "Program setup, or a framework/audit requiring a formal register", "deadline": "Taxonomy documented before the first formal risk scoring happens", "tool": "Anecdotes: the Risk Manager (A-ERM) module has likelihood \u00d7 impact and inherent/residual scoring built in \u2014 configure your scale there rather than a parallel spreadsheet."}, {"id": "risk-2", "text": "Run the annual enterprise risk assessment with business and risk owners", "priority": "high", "cadence": "annual", "done": false, "expectation": "Every major business area has had a structured risk conversation this year, not just security's own view of the risks.", "build": "A facilitated risk assessment workshop series with a scored output feeding the risk register.", "steps": ["Identify the business areas/risk owners to interview or workshop", "Prepare a structured questionnaire covering people, process, technology, and third-party risk", "Run the sessions and score outputs against the register taxonomy", "Consolidate results into an updated register and a summary of new or changed risks"], "trigger": "Start of the annual planning cycle", "deadline": "Assessment sessions completed and register updated within one fiscal quarter", "tool": "Anecdotes: log workshop outputs directly into Risk Manager so results update the live register instead of a separate deck."}, {"id": "risk-3", "text": "Define triggers for ad hoc assessments \u2014 new product, M&A, major incident, regulatory change", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "Risk assessment isn't only a once-a-year event \u2014 there's a clear, known trigger list that pulls one forward automatically.", "build": "A written trigger policy (e.g. in the risk management procedure) listing events that mandate an ad hoc assessment.", "steps": ["List the event types that should trigger a risk assessment outside the annual cycle", "Assign an owner responsible for flagging when a trigger event occurs", "Add a lightweight ad hoc assessment template so these don't require the full annual process", "Communicate the trigger list to product, corp dev, and incident response teams"], "trigger": "A defined trigger event occurs \u2014 new product, M&A, major incident, regulatory change", "deadline": "Ad hoc assessment kicked off within 10 business days of the trigger", "tool": "Anecdotes: use Agent Studio to auto-create a Risk Manager assessment task whenever a trigger event (e.g. a tagged product launch) is logged."}, {"id": "risk-4", "text": "Assign every register risk a named owner and a remediation due date", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "There is no risk in the register without someone whose job it is to reduce it, and a date by which they said they would.", "build": "An ownership field and due-date field on every register entry, reviewed for gaps.", "steps": ["Audit the register for any risk missing a named owner or due date", "Assign owners based on who actually controls the relevant process or system", "Set realistic but firm remediation due dates with the owner, not for them", "Re-visit and re-negotiate dates that are missed rather than letting them go silently stale"], "trigger": "A risk is added to the register", "deadline": "Owner and due date set at the moment of entry \u2014 never left blank past the next review cycle", "tool": "Anecdotes: owner and treatment-due-date are native Risk Manager fields \u2014 run a filtered view for any risk missing either."}, {"id": "risk-5", "text": "Hold recurring risk review syncs with owners on remediation progress", "priority": "med", "cadence": "quarterly", "done": false, "expectation": "Risk owners are talking to you about progress before you have to chase them.", "build": "A recurring risk review meeting series with a standing agenda and a tracked action log.", "steps": ["Group risk owners by function or by highest-priority risks for review cadence", "Send a short pre-read summarizing each owner's open risks and due dates", "Run the sync focused on blockers, not status theater", "Log agreed next steps and update the register immediately after"], "trigger": "Recurring calendar invite per owner group", "deadline": "Held at minimum quarterly; high-severity risk owners meet monthly", "tool": "Anecdotes: pull the pre-read straight from Risk Manager's heatmap/trend view instead of rebuilding a summary manually."}, {"id": "risk-6", "text": "Track issues from identification through remediation to closure with evidence", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Every closed issue has real evidence behind it \u2014 closure is never just a status field changing on trust.", "build": "An issue tracker (can be the same register or a linked log) with status, remediation plan, and closure evidence fields.", "steps": ["Log every issue the moment it's identified, however it surfaced (audit, assessment, incident)", "Require a remediation plan and target date before an issue is considered \u201cin progress\u201d", "Collect verifiable evidence of the fix before marking closed \u2014 never close on the owner's word alone", "Periodically spot-check a sample of \u201cclosed\u201d issues to confirm the fix actually held"], "trigger": "An issue is identified from any source \u2014 audit, assessment, incident", "deadline": "Remediation plan and target date logged within 5 business days of identification", "tool": "Anecdotes: Findings Management links each issue to the Risk Manager entry and requires Evidence Pool proof before a finding can be marked closed."}, {"id": "risk-7", "text": "Report top risks and risk trend to leadership or the risk committee", "priority": "med", "cadence": "quarterly", "done": false, "expectation": "Leadership can name the program's top risks and whether the overall picture is improving or worsening, without you re-explaining it each time.", "build": "A standing risk report or board/committee pack \u2014 top risks, trend line, and notable movements since last report.", "steps": ["Select the top 5\u201310 risks by residual score for the headline view", "Build a simple trend indicator (new / up / down / closed) since the last report", "Write a short narrative on the 2\u20133 risks that most need leadership attention or decisions", "Present on a fixed cadence so it becomes a predictable input to leadership planning"], "trigger": "Standing leadership/committee cadence", "deadline": "Report delivered on a fixed quarterly date, not \"whenever it's ready\"", "tool": "Anecdotes: generate the summary via ChatGRC against live Risk Manager data, or export its native trend/heatmap report directly."}], "frameworks": ["ISO27001", "NIST-CSF", "SOC2", "DORA"]}, {"id": "tprm", "name": "Third-Party Risk Management", "color": "#F2994A", "blurb": "Vendor and subprocessor risk assessments, ongoing monitoring, and remediation tracking across critical vendors.", "tasks": [{"id": "tprm-1", "text": "Build a vendor inventory with criticality tiering by data access, operational dependency, and regulatory impact", "priority": "high", "cadence": "annual", "done": false, "expectation": "Every vendor is in one place with a tier that actually reflects its real risk, not just its contract size.", "build": "A vendor inventory (spreadsheet or TPRM tool) with tier, data classification handled, and business owner per vendor.", "steps": ["Pull vendor lists from procurement, finance, and IT/engineering \u2014 they rarely match", "Define tiering criteria: data sensitivity, operational dependency, regulatory exposure", "Score and tier every vendor, and assign an internal business owner to each", "Set the tier-appropriate review cadence (critical = annual+continuous, low = light-touch)"], "trigger": "A new vendor relationship is proposed", "deadline": "Tiered within 5 business days of the vendor being identified, before any data access is granted", "tool": "Anecdotes: the A-TPRM module natively stores the vendor inventory and criticality tier \u2014 build it there rather than a spreadsheet that drifts from procurement's records."}, {"id": "tprm-2", "text": "Run pre-onboarding due diligence \u2014 security questionnaire, SOC 2/ISO evidence, insurance, subprocessor disclosure \u2014 for new vendors", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "No new vendor gets access to company data before its risk profile has actually been reviewed, not just contracted.", "build": "A pre-onboarding due diligence checklist and questionnaire gated into the procurement/contracting process.", "steps": ["Build a standard security questionnaire scaled by the vendor's proposed data access", "Require current SOC 2/ISO evidence (or equivalent) for any vendor touching sensitive data", "Confirm insurance coverage and subprocessor disclosures as part of the pack", "Block contract signature until the review is complete for critical/high-tier vendors"], "trigger": "A new vendor contract is proposed", "deadline": "Due diligence complete and signed off before contract signature \u2014 no exceptions for critical/high-tier vendors", "tool": "Anecdotes: A-TPRM automates questionnaire dispatch and pulls SOC 2/ISO evidence at onboarding, timestamped in the Evidence Pool."}, {"id": "tprm-3", "text": "Run annual reassessments for critical/high-tier vendors; lighter-touch reviews for lower tiers", "priority": "high", "cadence": "annual", "done": false, "expectation": "Critical vendors get a real annual look, not a rubber-stamp renewal of last year's file.", "build": "A tiered reassessment program with a defined depth of review per tier.", "steps": ["Schedule reassessments against each vendor's tier-based cadence", "Request updated audit reports, questionnaire refreshes, and incident history for critical vendors", "Use a lighter checklist (insurance, certifications on file) for low-tier vendors", "Record findings and any new risk items back into the vendor record"], "trigger": "Vendor's tier-based reassessment date arriving", "deadline": "Critical/high tier: annually, no later than the anniversary date; lower tiers per the lighter cadence", "tool": "Anecdotes: A-TPRM's reassessment workflow fires automatically on each vendor's tier-based cadence."}, {"id": "tprm-4", "text": "Stand up continuous monitoring \u2014 security ratings, breach and vulnerability intel \u2014 for critical vendors between formal reviews", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "You find out about a critical vendor's exposure within days, not at next year's review \u2014 annual snapshots alone aren't enough.", "build": "A continuous monitoring feed (security rating service or threat intel alerts) wired to your critical vendor list.", "steps": ["Select a security ratings or threat-intelligence tool that covers your critical vendor list", "Configure alerts for rating drops, disclosed breaches, and newly disclosed vulnerabilities", "Define an internal response process for when an alert fires \u2014 who reviews it, how fast", "Review monitoring coverage whenever the critical vendor list changes"], "trigger": "Ongoing, for every critical-tier vendor", "deadline": "Alert triage within 2 business days of a rating drop or disclosed breach", "tool": "Anecdotes: A-TPRM integrates external security-rating feeds for real-time posture, routing alerts into Findings Management."}, {"id": "tprm-5", "text": "Extend due diligence to cover vendor AI usage and data governance practices", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "You know which vendors are feeding your data into AI/ML systems and on what terms \u2014 this is no longer covered by legacy questionnaires alone.", "build": "An AI/data-governance addendum to the standard vendor questionnaire.", "steps": ["Add questions on AI/ML usage, model training on customer data, and data retention to the questionnaire", "Request the vendor's data processing and AI usage policies where relevant", "Flag vendors using customer data for model training without clear opt-out for follow-up", "Fold findings into the vendor's overall risk tier"], "trigger": "Vendor due diligence involves any AI/ML component", "deadline": "Addendum completed as part of the standard due-diligence window \u2014 no separate deadline", "tool": "Anecdotes: extend the A-TPRM questionnaire template with custom AI/data-governance questions via Data Studio."}, {"id": "tprm-6", "text": "Track vendor remediation items to closure against defined SLAs", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Vendor findings don't just sit in an email thread \u2014 they're tracked with the same discipline as internal issues.", "build": "A vendor remediation tracker with SLA, owner (internal and vendor-side), and evidence-of-closure field.", "steps": ["Log every finding from vendor assessments or monitoring alerts into the tracker", "Set an SLA scaled to severity and vendor tier", "Assign an internal owner responsible for chasing the vendor", "Require evidence before marking a remediation item closed"], "trigger": "A vendor assessment or monitoring alert produces a finding", "deadline": "SLA scaled to severity \u2014 critical findings chased weekly until closed", "tool": "Anecdotes: Findings Management linked to the vendor record carries the SLA field and owner natively."}, {"id": "tprm-7", "text": "Maintain a contractual-requirements checklist \u2014 incident notification windows, audit rights, subcontractor disclosure", "priority": "med", "cadence": "annual", "done": false, "expectation": "Every critical vendor contract actually contains the security terms you'd need in an incident, not just standard boilerplate.", "build": "A contract-clause checklist used in vendor contract review and renewal.", "steps": ["List the security/privacy clauses that must appear in critical vendor contracts", "Review current contracts for critical vendors against the checklist", "Flag gaps to legal/procurement for renegotiation at next renewal", "Re-check the list annually against evolving regulatory requirements"], "trigger": "Contract renewal or new critical vendor onboarding", "deadline": "Checklist reviewed at every renewal, not just at initial signature", "tool": "Anecdotes: store the clause checklist as a custom framework in the Framework Library, mapped per vendor."}], "frameworks": ["SOC2", "ISO27001", "DORA", "NIS2", "GDPR"]}, {"id": "audit", "name": "Internal & External Audits", "color": "#E5484D", "blurb": "Targeted internal audits to test control effectiveness, plus coordinating evidence, control owners, and remediation for external audit cycles.", "tasks": [{"id": "audit-1", "text": "Build an annual internal audit plan targeting the highest-risk controls", "priority": "high", "cadence": "annual", "done": false, "expectation": "The audit plan is risk-based, not arbitrary \u2014 the controls most likely to fail or matter most get tested first.", "build": "A written annual internal audit plan: control/process in scope, rationale, and target quarter.", "steps": ["Pull the highest-residual-risk items from the risk register as candidate audit topics", "Cross-reference with controls that have never been tested or failed before", "Sequence the plan across the year, balancing internal audit with external audit prep windows", "Get the plan signed off by leadership or the audit/risk committee"], "trigger": "Start of the annual planning cycle", "deadline": "Plan approved before the fiscal year begins", "tool": "Anecdotes: rank candidates using Risk Manager's residual-risk view, then track the approved plan as Findings Management items."}, {"id": "audit-2", "text": "Design and execute control tests \u2014 walkthroughs and sampling \u2014 and document results", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Every test has a documented method and a defensible sample, so the result would hold up if an external auditor re-tested it.", "build": "A control test plan template (objective, method, sample size, evidence) used consistently across tests.", "steps": ["Define the control objective and what \u201cpass\u201d looks like before testing", "Walk through the control with the owner to confirm it works as documented", "Pull a defensible sample (not just the easiest evidence to get) and test it", "Document results, exceptions found, and root cause for any failures"], "trigger": "A control is scheduled for testing per the audit plan", "deadline": "Test executed and documented within the plan's target quarter", "tool": "Anecdotes: A-CCM's evidence and control test history supports defensible sampling \u2014 document walkthrough notes as Findings."}, {"id": "audit-3", "text": "Track internal audit findings to remediation with owners and due dates", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Internal audit findings get fixed on the same rigor as external ones \u2014 they don't quietly disappear because no regulator is watching.", "build": "A findings tracker (can be the same issue log used elsewhere) linked back to each audit.", "steps": ["Log every finding with severity, root cause, and recommended fix", "Assign an owner and due date at the time the finding is issued, not after", "Track remediation progress on the same cadence as the risk register", "Re-test closed findings on a sample basis to confirm the fix held"], "trigger": "A finding is issued from any internal audit", "deadline": "Owner and due date assigned the same day the finding is issued", "tool": "Anecdotes: Findings Management natively links every finding to its control, owner, and required evidence."}, {"id": "audit-4", "text": "Coordinate external audit cycles (SOC 2, ISO 27001, etc.) \u2014 scoping, kickoff, evidence requests", "priority": "high", "cadence": "annual", "done": false, "expectation": "The audit runs on your terms and timeline, not the auditor's improvised requests mid-cycle.", "build": "An external audit project plan: scope, timeline, evidence request list, and control-owner assignments.", "steps": ["Confirm scope and audit period with the auditor well ahead of fieldwork", "Map the auditor's standard evidence request list to your control owners in advance", "Run a kickoff with control owners so they know what's coming and when", "Set internal deadlines ahead of the auditor's deadlines to leave review buffer"], "trigger": "Auditor confirms the audit period/kickoff date", "deadline": "Internal deadlines set at least 1\u20132 weeks ahead of the auditor's own deadlines", "tool": "Anecdotes: the Audit Workspace is purpose-built for this \u2014 scope, timeline, and evidence requests live in one auditor-facing portal."}, {"id": "audit-5", "text": "Maintain an evidence-request tracker mapped to control owners with due dates", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "You can tell an auditor, at any point mid-cycle, exactly what's outstanding and who owns it \u2014 without digging through email.", "build": "A live evidence-request tracker (spreadsheet or GRC platform) \u2014 request, owner, due date, status, auditor follow-ups.", "steps": ["Log every evidence request as it comes in, however it arrives (email, portal, call)", "Assign each request to the right control owner immediately", "Chase outstanding requests proactively \u2014 don't wait for the auditor to escalate", "Keep a record of what was submitted, when, and any auditor follow-up questions"], "trigger": "Any evidence request arriving from the auditor", "deadline": "Assigned to an owner within 1 business day of the request landing", "tool": "Anecdotes: Audit Workspace timestamps every request and its status \u2014 no separate spreadsheet needed."}, {"id": "audit-6", "text": "Run pre-audit readiness reviews to catch gaps before the auditors do", "priority": "med", "cadence": "annual", "done": false, "expectation": "Surprises get found by you, weeks before fieldwork, not by the auditor on day one.", "build": "A pre-audit readiness checklist mirroring the auditor's control matrix, run 4\u20136 weeks before fieldwork.", "steps": ["Pull the control matrix or framework requirements the audit will test against", "Spot-check evidence for each control as if you were the auditor", "Flag and fix any gaps found with time to spare before fieldwork starts", "Brief control owners on likely auditor questions based on what you found"], "trigger": "4\u20136 weeks before scheduled fieldwork", "deadline": "Gaps found are fixed with at least 2 weeks of buffer before fieldwork starts", "tool": "Anecdotes: run an A-CCM gap analysis ahead of fieldwork \u2014 it's the same engine auditors' testing will effectively mirror."}, {"id": "audit-7", "text": "Track external audit findings and exceptions to remediation and closure", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "External findings close on committed dates with real evidence \u2014 not carried forward, unaddressed, cycle after cycle.", "build": "A findings/exceptions tracker linked to the audit report, with remediation plan and closure evidence.", "steps": ["Log every finding or exception exactly as the auditor wrote it, with severity", "Get a remediation plan and committed date from the control owner", "Track progress and escalate anything at risk of missing its date", "Collect and file closure evidence before the next audit cycle begins"], "trigger": "Auditor issues the final report with findings/exceptions", "deadline": "Committed remediation date logged within 5 business days of report receipt", "tool": "Anecdotes: Findings Management tracks external findings the same way as internal ones, linked to the specific audit cycle."}], "frameworks": ["SOC2", "ISO27001", "SOX", "FEDRAMP"]}, {"id": "ccm", "name": "Continuous Control Monitoring & Evidence Automation", "color": "#2F80ED", "blurb": "Administer the GRC platform, keep automated control tests and evidence healthy, and maintain audit readiness year-round.", "tasks": [{"id": "ccm-1", "text": "Administer the GRC platform \u2014 integrations, control mappings, and access to the tool itself", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "The platform is a reliable source of truth \u2014 integrations stay connected, and only the right people can change control mappings.", "build": "A platform admin runbook: connected integrations, control-mapping owners, and an access review for the tool itself.", "steps": ["Inventory every integration feeding the platform and note its owner", "Set up alerting for any integration that disconnects or fails to sync", "Define who can edit control mappings and review that access list quarterly", "Document the platform's own admin access as part of your own UAR scope"], "trigger": "Ongoing \u2014 platform is live from day one", "deadline": "Integration health checked weekly; admin access reviewed each UAR cycle", "tool": "Anecdotes: this task IS platform administration \u2014 Data Engine integration status and control-mapping permissions are managed natively in Settings."}, {"id": "ccm-2", "text": "Map automated control tests to framework requirements (SOC 2, ISO 27001, etc.) and close mapping gaps", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Every framework requirement traces to a real automated test, and every gap where no test exists is known and tracked.", "build": "A control-to-requirement mapping matrix showing coverage and highlighting gaps.", "steps": ["Export the full list of framework requirements you operate under", "Match each to an existing automated test in the platform", "Flag requirements with no automated coverage as manual or as a build backlog item", "Re-check the mapping whenever a framework version updates"], "trigger": "A new framework is adopted, or framework version updates", "deadline": "Full mapping complete before that framework's first evidence cycle closes", "tool": "Anecdotes: the Framework Library's 60+ pre-mapped frameworks do requirement-level mapping automatically \u2014 gaps only remain for custom or unmapped requirements."}, {"id": "ccm-3", "text": "Triage automated test failures and evidence drift on a set cadence rather than letting them pile up", "priority": "high", "cadence": "weekly", "done": false, "expectation": "A failing test gets a human look within the week, not discovered for the first time during audit prep.", "build": "A weekly triage routine with a queue of failing tests and drifted evidence, each assigned an owner.", "steps": ["Pull the current list of failing or stale automated tests each week", "Sort by control criticality so nothing critical waits behind low-priority noise", "Assign each failure to the right control owner with context on what broke", "Track time-to-resolution so drift doesn't become the new normal"], "trigger": "A monitored control test fails, or evidence goes stale", "deadline": "Reviewed weekly, without exception, regardless of volume", "tool": "Anecdotes: A-CCM's agentic gap detection surfaces failures automatically \u2014 an Agent Studio agent can auto-route them to the control owner on a weekly cadence."}, {"id": "ccm-4", "text": "Spot-check that automated evidence is actually audit-ready \u2014 complete, correctly mapped, in context \u2014 not just green", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "A green checkmark actually means the evidence would satisfy an auditor, not just that a script ran successfully.", "build": "A periodic evidence spot-check log \u2014 sample of \u201cpassing\u201d controls reviewed as an auditor would review them.", "steps": ["Pull a random sample of \u201cpassing\u201d automated controls each cycle", "Review the underlying evidence as if you were the auditor seeing it cold", "Check it's complete, correctly mapped, and has enough context to stand alone", "Fix any evidence quality issues found, not just the sampled instance"], "trigger": "Recurring cadence, independent of any single audit", "deadline": "Sample reviewed monthly or quarterly depending on control volume", "tool": "Anecdotes: the Evidence Pool keeps a full audit trail per control \u2014 review the sampled evidence directly there as an auditor would."}, {"id": "ccm-5", "text": "Confirm every monitored control has a human owner so automation has a backstop", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "Automation never quietly runs unowned \u2014 someone is accountable for every control it tests, full stop.", "build": "An ownership audit of the control library, cross-checked against current staffing.", "steps": ["Export the full control library with current assigned owners", "Flag any control with no owner, or an owner who has left/changed roles", "Reassign gaps immediately \u2014 don't let automated tests run unowned", "Re-run this check whenever there's team turnover"], "trigger": "Recurring cadence, or triggered by team changes", "deadline": "Any ownership gap closed within 5 business days of being found", "tool": "Anecdotes: control owner is a native field in the Framework Library \u2014 filter for blanks directly rather than exporting to check."}, {"id": "ccm-6", "text": "Run a quarterly health check of integrations and control coverage", "priority": "med", "cadence": "quarterly", "done": false, "expectation": "You catch platform decay \u2014 broken integrations, shrinking coverage \u2014 on your own schedule, not the auditor's.", "build": "A quarterly platform health report: integration uptime, test coverage trend, and open triage items.", "steps": ["Review integration uptime/sync history for the quarter", "Track control coverage trend \u2014 is automated coverage growing or shrinking", "Summarize outstanding triage items and their age", "Share the health check with leadership as part of the metrics reporting cadence"], "trigger": "Start of each quarter", "deadline": "Health report published within the first week of the quarter", "tool": "Anecdotes: the Data Engine's integration status view plus A-CCM's coverage trend report cover most of this natively."}], "frameworks": ["SOC2", "ISO27001", "NIST-CSF", "FEDRAMP"]}, {"id": "partners", "name": "Cross-Functional Partnerships", "color": "#EC4899", "blurb": "Build relationships across engineering, IT, operations, legal, and sales \u2014 meeting teams where they are rather than gatekeeping.", "tasks": [{"id": "partners-1", "text": "Map key stakeholders across engineering, IT, operations, legal, and sales, and their GRC touchpoints", "priority": "med", "cadence": "annual", "done": false, "expectation": "You know, before you need them, exactly who to call in each function for access, risk, or audit needs.", "build": "A stakeholder map: function, key contact, and where GRC intersects their work.", "steps": ["List each function and the GRC-relevant activities they own (access grants, system changes, contracts, deals)", "Identify the actual point person, not just the team, for each", "Note their preferred communication channel and typical response time", "Refresh the map whenever there's a reorg or role change"], "trigger": "Annual planning cycle, or a reorg", "deadline": "Map refreshed within 30 days of any reorg affecting a mapped stakeholder"}, {"id": "partners-2", "text": "Set up recurring syncs with high-touch partner teams (engineering/security, IT ops)", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "The highest-friction teams have a standing channel to raise issues before they become audit findings.", "build": "A recurring sync (biweekly or monthly) with a running shared agenda.", "steps": ["Identify the 1\u20132 teams with the most GRC touchpoints (usually engineering/security and IT ops)", "Propose a cadence and keep it short and focused", "Maintain a shared running doc so items don't get lost between syncs", "Use the sync to surface upcoming changes that might affect controls or scope"], "trigger": "Ongoing, once the highest-friction teams are identified", "deadline": "Cadence held consistently for at least 2 quarters before being re-evaluated"}, {"id": "partners-3", "text": "Build self-service resources \u2014 intake forms, FAQs, a Slack channel \u2014 so teams can engage without booking a meeting", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "Most routine GRC questions get answered without you personally in the loop.", "build": "A self-service hub: an intake form for common requests, an FAQ doc, and a monitored Slack/Teams channel.", "steps": ["List the most common requests you get (exceptions, access questions, vendor reviews) and build intake forms for each", "Write an FAQ covering the top 10 recurring questions", "Stand up and actively monitor a dedicated channel", "Point people to the self-service hub consistently instead of ad hoc DMs"], "trigger": "Recurring intake volume justifying self-service", "deadline": "Hub live before the next onboarding cohort or audit cycle", "tool": "Anecdotes: ChatGRC lets partner teams query the live compliance program directly \u2014 fewer routine questions need to reach you at all."}, {"id": "partners-4", "text": "Ask partner teams where GRC process creates friction, and act on it", "priority": "low", "cadence": "quarterly", "done": false, "expectation": "Partner teams see GRC as something that adapts based on their feedback, not a fixed set of rules handed down.", "build": "A short quarterly feedback pulse (survey or informal check-ins) with a visible \u201cwhat we changed\u201d follow-up.", "steps": ["Send a short, specific feedback prompt to partner teams each quarter", "Look for patterns, not just one-off complaints", "Pick at least one concrete process change per quarter based on the feedback", "Close the loop \u2014 tell teams what changed because of what they said"], "trigger": "Quarterly feedback cycle", "deadline": "At least one concrete process change committed to within 30 days of collecting feedback"}], "frameworks": []}, {"id": "owners", "name": "Control Owner Enablement", "color": "#22C55E", "blurb": "Educate control owners on responsibilities and expectations, prepare them for audits, and help them operationalize controls rather than treat compliance as a checkbox.", "tasks": [{"id": "owners-1", "text": "Name and document an owner for every control", "priority": "high", "cadence": "ongoing", "done": false, "expectation": "There is no control in your library that isn't clearly somebody's job.", "build": "An ownership field on the control library, audited for gaps.", "steps": ["Export the full control library", "Cross-check ownership against current org structure", "Fill any gaps by identifying who actually operates the control day-to-day", "Get explicit acknowledgement from each owner, not just a name in a spreadsheet"], "trigger": "A control is added to the library, or an owner leaves/changes role", "deadline": "Ownership gap closed within 5 business days", "tool": "Anecdotes: owner is a required field on every control in the Framework Library \u2014 run a gap filter after any team change."}, {"id": "owners-2", "text": "Run onboarding sessions for new control owners on their responsibilities and evidence expectations", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "A new control owner knows exactly what's expected of them before their first evidence request lands.", "build": "A short onboarding session template plus a one-page \u201cwhat you own\u201d reference doc per owner.", "steps": ["Build a standard onboarding deck covering what a control is, why it matters, and how it's tested", "Trigger onboarding automatically whenever ownership changes", "Give each owner a one-pager listing their specific controls and cadence", "Confirm understanding with a quick Q&A, not just a one-way presentation"], "trigger": "Ownership assigned or reassigned", "deadline": "Onboarding session held within 2 weeks of the assignment", "tool": "Anecdotes: trigger the onboarding checklist automatically via Agent Studio whenever a control's owner field changes."}, {"id": "owners-3", "text": "Publish plain-language control guides \u2014 what it is, why it matters, how to evidence it", "priority": "med", "cadence": "annual", "done": false, "expectation": "A control owner can self-serve the answer to \u201cwhat do I actually need to do\u201d without pinging you.", "build": "A control guide library \u2014 one short page per control or control family, written for a non-GRC audience.", "steps": ["Pick the highest-touch controls to document first", "Write each guide in plain language: what it is, why it matters, exactly what evidence satisfies it", "Include a real example of acceptable evidence", "Keep guides in the same place owners already work (wiki, GRC platform)"], "trigger": "A control is added to the library without documentation", "deadline": "Guide published before the control's first evidence cycle", "tool": "Anecdotes: attach the plain-language guide as linked documentation on the control record in Policy Guardian."}, {"id": "owners-4", "text": "Prep control owners ahead of each audit cycle with mock walkthroughs and likely auditor questions", "priority": "high", "cadence": "annual", "done": false, "expectation": "No control owner is caught off guard by an auditor's question \u2014 they've heard something close to it from you first.", "build": "A pre-audit prep session series with a mock walkthrough script per high-risk control.", "steps": ["Identify the controls most likely to get deep auditor scrutiny", "Run a mock walkthrough with the owner, asking the questions an auditor would", "Coach on common pitfalls \u2014 vague answers, missing evidence, inconsistent process description", "Leave owners with a short cheat-sheet of likely questions and good answers"], "trigger": "4\u20136 weeks before each audit cycle", "deadline": "Every high-risk control owner prepped before fieldwork begins", "tool": "Anecdotes: pull real questions asked in past cycles from Audit Workspace history to build realistic mock walkthroughs."}, {"id": "owners-5", "text": "Track control owner responsiveness and evidence timeliness, and coach where it lags", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "You can see, objectively, which owners need support before it becomes an audit risk \u2014 not just anecdotally.", "build": "A responsiveness scorecard per owner, tracked across evidence requests and UAR cycles.", "steps": ["Track response time and evidence quality for each owner across cycles", "Identify owners consistently slow or providing weak evidence", "Have a direct, supportive coaching conversation rather than just escalating", "Recognize and highlight owners who consistently do it well"], "trigger": "Each UAR or evidence-request cycle closing", "deadline": "Scorecard updated within a week of the cycle closing", "tool": "Anecdotes: Findings Management and Audit Workspace both timestamp response times per owner \u2014 report directly from that data."}], "frameworks": ["ISO27001", "SOC2"]}, {"id": "policy", "name": "Policy Library Management", "color": "#6366F1", "blurb": "Keep security policies, standards, and procedures current, practical, and aligned to the frameworks the company operates under.", "tasks": [{"id": "policy-1", "text": "Inventory every policy, standard, and procedure and map each to the frameworks it supports", "priority": "high", "cadence": "annual", "done": false, "expectation": "You know exactly which policy satisfies which framework requirement \u2014 no gaps, no orphaned documents nobody uses.", "build": "A policy inventory matrix: document, owner, version, last review date, and frameworks it maps to.", "steps": ["List every current policy, standard, and procedure in one place", "Map each to the framework clauses/requirements it supports", "Identify any framework requirement with no supporting policy", "Identify any policy nobody can map to a current framework requirement (candidate for retirement)"], "trigger": "Program setup, or a new policy created", "deadline": "Inventory kept current \u2014 no policy exists for more than 30 days without a framework mapping", "tool": "Anecdotes: Policy Guardian stores every policy and maps it to requirements natively \u2014 build the inventory there, not in a separate tracker."}, {"id": "policy-2", "text": "Run the annual policy review cycle with a named approver per policy", "priority": "high", "cadence": "annual", "done": false, "expectation": "Every policy has been read and re-approved by someone accountable this year \u2014 not silently rolled over.", "build": "An annual review workflow with a named approver and review date per policy.", "steps": ["Assign a named approver (usually the relevant functional lead) to each policy", "Schedule reviews across the year rather than all at once", "Require the approver to actually read and confirm, not just click through", "Version and date-stamp every reviewed policy"], "trigger": "Each policy's scheduled annual review date", "deadline": "Approver sign-off within 15 business days of the review being triggered", "tool": "Anecdotes: Policy Guardian's scheduled review and approver workflow handles the reminders and sign-off trail automatically."}, {"id": "policy-3", "text": "Update policies for framework and regulatory changes as they land", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "Policies reflect what the frameworks actually require today, not what they required when the policy was written.", "build": "A change-monitoring process feeding directly into policy updates.", "steps": ["Monitor framework and regulatory updates relevant to your operating footprint", "Assess impact on existing policies when a change lands", "Update affected policies and communicate the change to relevant teams", "Track the update in the policy's version history"], "trigger": "A framework version updates or a regulation changes", "deadline": "Affected policies updated within 60 days of the change taking effect", "tool": "Anecdotes: A-PLM's automated gap detection flags policies that fall out of alignment the moment a mapped framework updates."}, {"id": "policy-4", "text": "Track policy acknowledgment and attestation completion across the company", "priority": "med", "cadence": "annual", "done": false, "expectation": "You can prove, for any employee, that they read and accepted the policies that apply to them.", "build": "An attestation campaign with a completion tracker, similar in structure to the awareness training tracker.", "steps": ["Identify which policies require company-wide (vs. role-specific) attestation", "Launch the attestation campaign with a clear deadline", "Escalate overdue attestations to managers", "Archive attestation records as audit evidence"], "trigger": "Annual attestation campaign launch", "deadline": "100% attestation by the compliance deadline, escalated the same way as training completion", "tool": "Anecdotes: run attestation natively in Policy Guardian, or ingest attestation records from your LMS/HRIS via Data Studio if it lives elsewhere."}, {"id": "policy-5", "text": "Retire or consolidate outdated and duplicate policies", "priority": "low", "cadence": "annual", "done": false, "expectation": "The policy library is something people can actually navigate \u2014 not a graveyard of overlapping, contradictory documents.", "build": "A policy consolidation review as part of the annual cycle.", "steps": ["Identify policies with overlapping scope or contradictory guidance", "Identify policies that no longer map to any active framework requirement", "Propose consolidation or retirement to the relevant owners", "Formally retire documents (with a record of the decision) rather than just deleting them"], "trigger": "Annual review cycle surfaces an outdated/duplicate policy", "deadline": "Retirement decision made within the same review cycle it's flagged in", "tool": "Anecdotes: Policy Guardian's version history lets you formally retire a document without losing its audit trail."}], "frameworks": ["ISO27001", "SOC2", "NIST-CSF", "GDPR"]}, {"id": "metrics", "name": "Metrics, Insights & Reporting", "color": "#06B6D4", "blurb": "Turn access review, awareness, and risk findings into insights that flag high-risk users, teams, or behaviors, and drive targeted interventions.", "tasks": [{"id": "metrics-1", "text": "Define a core metrics set \u2014 access review completion, phishing failure rate, risk closure rate, vendor SLA adherence, audit finding aging", "priority": "high", "cadence": "annual", "done": false, "expectation": "There's one agreed set of numbers everyone uses to talk about the program's health \u2014 not a different metric invented for every meeting.", "build": "A metrics definitions doc: each metric, its formula, target, and data source.", "steps": ["Pick 5\u20138 metrics that genuinely represent program health, not vanity numbers", "Write a precise formula for each so it's calculated the same way every time", "Set a target or benchmark for each metric", "Identify the data source/owner for each so it can be pulled reliably"], "trigger": "Program setup, or annual metrics refresh", "deadline": "Definitions locked before the first monthly reporting cycle using them", "tool": "Anecdotes: A-CCM and Risk Manager already track most of these natively \u2014 set target thresholds in platform settings rather than a parallel metrics sheet."}, {"id": "metrics-2", "text": "Build a recurring leadership dashboard that translates findings into a risk narrative, not raw data", "priority": "high", "cadence": "monthly", "done": false, "expectation": "Leadership walks away understanding what's actually at risk and what needs a decision \u2014 not just a wall of numbers.", "build": "A leadership dashboard or report template: headline metrics, trend, and a 3\u20134 sentence narrative per cycle.", "steps": ["Pull the core metrics set into a simple, consistent visual layout", "Write a short narrative interpreting what moved and why it matters", "Highlight the one or two things that need a leadership decision", "Keep the format identical cycle to cycle so trends are easy to spot"], "trigger": "Monthly reporting cadence", "deadline": "Dashboard published within 5 business days of month-end", "tool": "Anecdotes: use ChatGRC to generate the narrative from live data, or export native reporting instead of a manual monthly pull."}, {"id": "metrics-3", "text": "Mine access, awareness, and risk data for high-risk users, teams, or behaviors and drive targeted interventions", "priority": "high", "cadence": "quarterly", "done": false, "expectation": "You're not waiting for an incident to know which teams or individuals carry outsized risk \u2014 the data already told you.", "build": "A quarterly risk-signal review combining access, awareness, and risk data into a ranked watchlist.", "steps": ["Combine signals \u2014 repeat phishing failures, excess standing access, overdue reviews \u2014 per person or team", "Rank by combined risk signal, not any single data point alone", "Design a targeted intervention (coaching, access reduction, closer monitoring) for the top items", "Track whether the intervention actually reduced the signal next quarter"], "trigger": "Quarterly reporting cadence", "deadline": "Watchlist reviewed and interventions assigned within 10 business days of quarter-end", "tool": "Anecdotes: combine UAR, ingested awareness data, and Risk Manager signals with a Custom Analysis Rule to auto-flag high-risk combinations."}, {"id": "metrics-4", "text": "Track metric trends over time and flag deteriorating areas early", "priority": "med", "cadence": "ongoing", "done": false, "expectation": "A slow decline gets caught and named while it's still small, not after it's become a finding.", "build": "A trend view (not just point-in-time) for each core metric, with a simple flag threshold.", "steps": ["Store each metric's value over time, not just the latest snapshot", "Set a threshold or trend rule that should trigger a flag (e.g. two consecutive declines)", "Investigate flagged trends before the next reporting cycle, not at it", "Note root cause and corrective action alongside the trend data"], "trigger": "Ongoing, every reporting cycle", "deadline": "Any flagged decline investigated before the next cycle's report goes out", "tool": "Anecdotes: A-CCM coverage trend and Risk Manager trend views are native \u2014 no manual charting needed."}, {"id": "metrics-5", "text": "Present GRC program metrics to leadership on a set cadence", "priority": "med", "cadence": "quarterly", "done": false, "expectation": "Leadership visibility into the program is a predictable, scheduled input to their planning \u2014 not something that only happens around audits.", "build": "A standing spot on a leadership or board-level agenda for the GRC metrics report.", "steps": ["Secure a recurring slot on the relevant leadership or committee agenda", "Bring the dashboard plus the narrative, not raw data dumps", "Come with a clear ask when leadership input or budget is needed", "Follow up on any commitments made in the previous session"], "trigger": "Standing leadership/board cadence", "deadline": "Slot confirmed at least one quarter in advance"}], "frameworks": ["SOX", "ISO27001", "GDPR", "NIST-CSF"]}, {"id": "other", "name": "Additional & Emerging Projects", "color": "#64748B", "blurb": "The catch-all for whatever the program picks up next \u2014 add items here as priorities shift and new needs surface.", "tasks": [], "frameworks": []}], "updatedAt": null, "regCategories": [{"id": "frameworks", "name": "Security & Compliance Frameworks", "color": "#2F80ED", "platformNote": "Anecdotes' Framework Library ships 60+ pre-mapped frameworks (SOC 2, ISO 27001, NIST CSF, and more) \u2014 enable the ones you need and evidence maps at the requirement level automatically."}, {"id": "privacy", "name": "Data Protection & Privacy Laws", "color": "#7C5CFC", "platformNote": "Not natively pre-mapped in most GRC platforms \u2014 model each law as a custom framework in the Framework Library so DSR and RoPA evidence still lives in the same Evidence Pool."}, {"id": "financial", "name": "Payment & Financial Regulations", "color": "#F2994A", "platformNote": "Coverage varies by platform \u2014 PCI DSS is commonly pre-mapped; SOX, GLBA, and DORA usually need a custom framework built in the Framework Library."}, {"id": "sector", "name": "Sector & Critical Infrastructure", "color": "#E5484D", "platformNote": "Typically requires a custom framework build \u2014 map each requirement once and reuse it across HIPAA, NIS2, or CMMC evidence requests as they overlap with existing controls."}, {"id": "ai", "name": "AI Governance", "color": "#0E9C97", "platformNote": "An emerging area for most GRC platforms \u2014 track AI system inventory and risk in Risk Manager (A-ERM) until dedicated AI-governance tooling matures."}], "regulations": [{"id": "soc2", "code": "SOC2", "name": "SOC 2 (Type I/II)", "category": "frameworks", "description": "AICPA Trust Services Criteria attestation covering security, availability, processing integrity, confidentiality, and privacy.", "trigger": "Almost any B2B SaaS or vendor handling customer data \u2014 usually a sales/procurement requirement.", "obligations": ["Select the Trust Services Criteria in scope (Security is mandatory; add Availability/Confidentiality/Privacy as relevant)", "Stand up and evidence controls continuously for a Type II observation period (typically 6\u201312 months)", "Engage a licensed CPA firm to perform the audit", "Track and remediate any exceptions noted in the report", "Distribute the report under NDA to prospects/customers who request it"], "status": "not-assessed", "notes": ""}, {"id": "iso27001", "code": "ISO27001", "name": "ISO/IEC 27001:2022", "category": "frameworks", "description": "International standard for an Information Security Management System (ISMS) \u2014 certifiable.", "trigger": "Common requirement for enterprise and international customers, especially in the EU/UK/APAC.", "obligations": ["Define the ISMS scope and conduct a formal risk assessment against Annex A controls", "Produce a Statement of Applicability (SoA) justifying included/excluded controls", "Run the ISMS for a full cycle (management reviews, internal audits, corrective actions) before certification", "Engage an accredited certification body for Stage 1 and Stage 2 audits", "Maintain via annual surveillance audits and full recertification every 3 years"], "status": "not-assessed", "notes": ""}, {"id": "iso27701", "code": "ISO27701", "name": "ISO/IEC 27701", "category": "frameworks", "description": "Privacy Information Management extension to ISO 27001, mapping to GDPR-style obligations.", "trigger": "Useful once ISO 27001 is in place and privacy commitments need formal certification.", "obligations": ["Extend the existing ISMS to cover PII controller/processor obligations", "Map privacy controls to applicable privacy laws (GDPR, CCPA, etc.)", "Document data subject rights handling processes", "Include in ISO 27001 surveillance/certification audits"], "status": "not-assessed", "notes": ""}, {"id": "nistcsf", "code": "NIST-CSF", "name": "NIST Cybersecurity Framework 2.0", "category": "frameworks", "description": "Voluntary US framework organizing security practices into Govern, Identify, Protect, Detect, Respond, Recover.", "trigger": "Common baseline for US companies, often requested by enterprise customers or cyber insurers.", "obligations": ["Map current controls against the six CSF 2.0 functions and note maturity per category", "Use the Govern function to formalize risk management roles and oversight", "Identify and close the highest-priority gaps first", "Use CSF profiles to benchmark target vs. current state and report progress"], "status": "not-assessed", "notes": ""}, {"id": "fedramp", "code": "FEDRAMP", "name": "NIST SP 800-53 / FedRAMP", "category": "frameworks", "description": "Federal risk and authorization framework required to sell cloud services to US government agencies.", "trigger": "Only applies if you sell or plan to sell to US federal, state, or local government.", "obligations": ["Determine target impact level (Low/Moderate/High) based on data sensitivity", "Select a sponsoring agency or pursue FedRAMP-ready/Marketplace status", "Implement the full NIST 800-53 control baseline for the target level", "Engage a Third-Party Assessment Organization (3PAO) for the security assessment", "Maintain continuous monitoring reporting once authorized"], "status": "not-assessed", "notes": ""}, {"id": "iso22301", "code": "ISO22301", "name": "ISO 22301 (Business Continuity)", "category": "frameworks", "description": "International standard for a Business Continuity Management System (BCMS).", "trigger": "Relevant once operations are critical enough that downtime has material customer/regulatory impact.", "obligations": ["Conduct a business impact analysis (BIA) to identify critical processes and recovery targets", "Build and test business continuity and disaster recovery plans", "Run at least annual tabletop or simulation exercises", "Certify formally only if customers or regulators require it \u2014 otherwise operate to the standard informally"], "status": "not-assessed", "notes": ""}, {"id": "gdpr", "code": "GDPR", "name": "GDPR (EU)", "category": "privacy", "description": "EU General Data Protection Regulation \u2014 comprehensive personal data protection law with extraterritorial reach.", "trigger": "Applies if you offer goods/services to, or monitor, individuals in the EU \u2014 regardless of where you're based.", "obligations": ["Maintain a Record of Processing Activities (RoPA) under Article 30", "Establish a lawful basis for every processing activity and document it", "Stand up data subject rights handling (access, deletion, portability) within statutory deadlines", "Run Data Protection Impact Assessments (DPIAs) for high-risk processing", "Appoint a DPO or EU representative if required, and maintain breach notification procedures (72-hour rule)"], "status": "not-assessed", "notes": ""}, {"id": "ukgdpr", "code": "UK-GDPR", "name": "UK GDPR & Data Protection Act 2018", "category": "privacy", "description": "UK's post-Brexit retained version of GDPR plus the Data Protection Act 2018.", "trigger": "Applies if you offer goods/services to, or monitor, individuals in the UK.", "obligations": ["Mirror GDPR obligations (RoPA, lawful basis, DSR handling) for UK data subjects specifically", "Register with the ICO if required and pay the data protection fee", "Track UK-specific guidance (ICO codes of practice) separately from EU guidance where they diverge", "Maintain a UK representative if you have no UK establishment but process UK residents' data"], "status": "not-assessed", "notes": ""}, {"id": "ccpa", "code": "CCPA", "name": "CCPA / CPRA (California)", "category": "privacy", "description": "California Consumer Privacy Act as amended by the California Privacy Rights Act \u2014 US's most comprehensive state privacy law.", "trigger": "Applies based on revenue, data volume, or data-selling thresholds involving California residents.", "obligations": ["Confirm applicability against the CCPA's revenue/volume/data-sale thresholds", "Publish a compliant privacy notice covering categories of data, purposes, and consumer rights", "Stand up consumer rights request handling (access, deletion, correction, opt-out of sale/sharing)", "Honor Global Privacy Control (GPC) signals as an opt-out mechanism", "Maintain data processing agreements with service providers/contractors"], "status": "not-assessed", "notes": ""}, {"id": "usstate", "code": "US-STATE", "name": "Other US State Privacy Laws", "category": "privacy", "description": "A growing patchwork \u2014 Virginia (VCDPA), Colorado (CPA), Connecticut (CTDPA), Utah (UCPA), and others, each with variations.", "trigger": "Applies based on each state's own thresholds if you process residents' data from that state.", "obligations": ["Track which states you have applicability triggers in as your user base grows", "Build a baseline privacy program that satisfies the strictest applicable state law, then layer exceptions", "Monitor for new state laws taking effect \u2014 this list changes yearly", "Keep a jurisdiction matrix noting which rights/obligations differ by state"], "status": "not-assessed", "notes": ""}, {"id": "pipeda", "code": "PIPEDA", "name": "PIPEDA (Canada)", "category": "privacy", "description": "Canada's federal private-sector privacy law.", "trigger": "Applies if you collect, use, or disclose personal information of Canadian residents in commercial activity.", "obligations": ["Identify a designated privacy officer accountable for compliance", "Obtain meaningful consent for collection, use, and disclosure of personal information", "Maintain breach record-keeping and notify the Privacy Commissioner for reportable breaches", "Respond to individual access requests within statutory timelines"], "status": "not-assessed", "notes": ""}, {"id": "lgpd", "code": "LGPD", "name": "LGPD (Brazil)", "category": "privacy", "description": "Brazil's General Data Protection Law, closely modeled on GDPR.", "trigger": "Applies if you process personal data of individuals located in Brazil.", "obligations": ["Establish a lawful basis for processing under LGPD's ten legal bases", "Appoint a data protection officer (Encarregado)", "Stand up data subject rights handling aligned to LGPD timelines", "Report qualifying breaches to the ANPD (national authority)"], "status": "not-assessed", "notes": ""}, {"id": "pcidss", "code": "PCIDSS", "name": "PCI DSS v4.0", "category": "financial", "description": "Payment Card Industry Data Security Standard for any entity that stores, processes, or transmits cardholder data.", "trigger": "Applies if you directly handle card data \u2014 often avoidable by fully outsourcing to a compliant payment processor.", "obligations": ["Determine your SAQ type or Report on Compliance requirement based on transaction volume and role", "Minimize cardholder data footprint \u2014 tokenize or outsource to a PCI-compliant processor wherever possible", "Implement required technical controls (network segmentation, encryption, access control, logging)", "Complete quarterly ASV vulnerability scans and annual penetration testing", "Re-certify annually via self-assessment or Qualified Security Assessor (QSA) audit"], "status": "not-assessed", "notes": ""}, {"id": "sox", "code": "SOX", "name": "Sarbanes-Oxley (SOX)", "category": "financial", "description": "US law governing financial reporting controls and internal controls over financial reporting (ICFR).", "trigger": "Applies to US publicly traded companies, and often adopted pre-emptively ahead of an IPO.", "obligations": ["Scope in-scope financial systems and processes with internal audit/finance", "Document and test IT General Controls (ITGCs) \u2014 access, change management, operations", "Support management's annual assertion on the effectiveness of internal controls (Section 404)", "Track and remediate control deficiencies with finance and external auditors", "Maintain segregation-of-duties controls over financially relevant systems"], "status": "not-assessed", "notes": ""}, {"id": "glba", "code": "GLBA", "name": "Gramm-Leach-Bliley Act (GLBA)", "category": "financial", "description": "US law requiring financial institutions to protect consumer financial information (Safeguards Rule).", "trigger": "Applies to companies deemed financial institutions under GLBA \u2014 includes many fintechs.", "obligations": ["Confirm whether your business activities meet the FTC's definition of a \u201cfinancial institution\u201d", "Designate a qualified individual to oversee the information security program", "Perform a written risk assessment and implement the Safeguards Rule's required controls", "Maintain an incident response plan meeting GLBA-specific requirements", "Oversee service providers handling covered customer information"], "status": "not-assessed", "notes": ""}, {"id": "dora", "code": "DORA", "name": "Digital Operational Resilience Act (EU)", "category": "financial", "description": "EU regulation on ICT risk management and operational resilience for the financial sector and their critical ICT vendors.", "trigger": "Applies to EU financial entities, and to their critical third-party ICT/cloud providers.", "obligations": ["Determine if you are an in-scope financial entity or a critical ICT third-party provider", "Implement ICT risk management framework requirements aligned to DORA's five pillars", "Register in-scope ICT third-party providers in the regulator's oversight register", "Run threat-led penetration testing (TLPT) if required for your entity type", "Report major ICT-related incidents within DORA's mandated timelines"], "status": "not-assessed", "notes": ""}, {"id": "hipaa", "code": "HIPAA", "name": "HIPAA / HITECH", "category": "sector", "description": "US law protecting health information, with Privacy, Security, and Breach Notification Rules.", "trigger": "Applies if you're a covered entity or business associate handling Protected Health Information (PHI).", "obligations": ["Confirm covered entity / business associate status and execute Business Associate Agreements (BAAs) accordingly", "Implement the Security Rule's administrative, physical, and technical safeguards", "Run a HIPAA-specific risk analysis and remediation plan", "Maintain breach notification procedures meeting HIPAA/HITECH timelines", "Train workforce members with PHI access on privacy and security requirements"], "status": "not-assessed", "notes": ""}, {"id": "nis2", "code": "NIS2", "name": "NIS2 Directive (EU)", "category": "sector", "description": "EU directive strengthening cybersecurity requirements for essential and important entities across critical sectors.", "trigger": "Applies if you operate in an in-scope sector (energy, transport, health, digital infrastructure, and more) in the EU.", "obligations": ["Determine if your entity falls under \u201cessential\u201d or \u201cimportant\u201d classification in each member state you operate in", "Implement required cybersecurity risk-management measures across the supply chain", "Establish incident reporting capable of meeting NIS2's 24-hour early warning requirement", "Ensure management-level accountability and training for cybersecurity risk oversight"], "status": "not-assessed", "notes": ""}, {"id": "cmmc", "code": "CMMC", "name": "Cybersecurity Maturity Model Certification", "category": "sector", "description": "US Department of Defense contractor cybersecurity certification program, built on NIST SP 800-171.", "trigger": "Applies if you are (or want to be) a DoD contractor or subcontractor handling Controlled Unclassified Information (CUI).", "obligations": ["Determine required CMMC level based on the data/contracts involved", "Implement NIST SP 800-171 controls as the technical baseline", "Complete a self-assessment or engage a Certified Third-Party Assessment Organization (C3PAO) depending on level", "Maintain a System Security Plan (SSP) and Plan of Action & Milestones (POA&M)"], "status": "not-assessed", "notes": ""}, {"id": "euaiact", "code": "EU-AI-ACT", "name": "EU AI Act", "category": "ai", "description": "EU regulation establishing risk-based obligations for AI systems, from prohibited practices to high-risk system requirements.", "trigger": "Applies if you develop, deploy, or use AI systems that affect people in the EU, scaled by risk tier.", "obligations": ["Classify each AI use case (internal or vendor-provided) by the Act's risk tiers", "Avoid or eliminate any prohibited AI practices in scope", "For high-risk systems, implement required risk management, data governance, and human oversight", "Maintain transparency obligations (e.g. disclosing AI-generated content, chatbots) where applicable", "Track vendor AI tools' own compliance claims as part of third-party risk reviews"], "status": "not-assessed", "notes": ""}, {"id": "nistai", "code": "NIST-AI-RMF", "name": "NIST AI Risk Management Framework", "category": "ai", "description": "Voluntary US framework for managing risks in the design, development, and use of AI systems.", "trigger": "Useful baseline wherever AI is used internally or in the product, regardless of jurisdiction.", "obligations": ["Inventory AI systems in use, both internal tooling and product features", "Apply the framework's Govern/Map/Measure/Manage functions to each system", "Document known limitations, risks, and mitigations per AI use case", "Feed AI risk findings into the main risk register alongside other program risks"], "status": "not-assessed", "notes": ""}]};
+  var app = document.getElementById('app');
+  var activeTab = 'tasks';
+  var filters = { q: "", status: "open", priority: "all" };
+  var expandedIds = {};
+  var regFilters = { q: "", category: "all", status: "all" };
+  var expandedRegIds = {};
+  var flashRegId = null;
+
+  var PRIORITY_LABEL = { high: "High", med: "Med", low: "Low" };
+  var CADENCE_LABEL = { weekly: "Weekly", monthly: "Monthly", quarterly: "Quarterly", annual: "Annual", ongoing: "Ongoing", adhoc: "Ad hoc" };
+  var REG_STATUS = {
+    "not-assessed": { label: "Not assessed", color: "#8B97A1" },
+    "monitoring": { label: "Monitoring", color: "#2F80ED" },
+    "in-progress": { label: "In progress", color: "#F2994A" },
+    "compliant": { label: "Compliant", color: "#22C55E" },
+    "not-applicable": { label: "N/A", color: "#B9C0C6" }
+  };
+  var REG_STATUS_ORDER = ["compliant", "in-progress", "monitoring", "not-assessed", "not-applicable"];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function findDomain(id) { for (var i = 0; i < STATE.domains.length; i++) if (STATE.domains[i].id === id) return STATE.domains[i]; return null; }
+  function findTask(domain, id) { if (!domain) return null; for (var i = 0; i < domain.tasks.length; i++) if (domain.tasks[i].id === id) return domain.tasks[i]; return null; }
+  function findReg(code) { for (var i = 0; i < STATE.regulations.length; i++) if (STATE.regulations[i].code === code) return STATE.regulations[i]; return null; }
+  function findCategory(id) { for (var i = 0; i < STATE.regCategories.length; i++) if (STATE.regCategories[i].id === id) return STATE.regCategories[i]; return null; }
+
+  function domainCounts(d) {
+    var total = d.tasks.length, done = 0;
+    for (var i = 0; i < d.tasks.length; i++) if (d.tasks[i].done) done++;
+    return { total: total, done: done };
+  }
+  function overallCounts() {
+    var total = 0, done = 0, highOpen = 0;
+    STATE.domains.forEach(function (d) {
+      d.tasks.forEach(function (task) {
+        total++;
+        if (task.done) done++; else if (task.priority === "high") highOpen++;
+      });
+    });
+    return { total: total, done: done, highOpen: highOpen };
+  }
+  function regCounts() {
+    var counts = { "not-assessed": 0, "monitoring": 0, "in-progress": 0, "compliant": 0, "not-applicable": 0 };
+    STATE.regulations.forEach(function (r) { counts[r.status] = (counts[r.status] || 0) + 1; });
+    return counts;
+  }
+  function categoryRegCounts(catId) {
+    var list = STATE.regulations.filter(function (r) { return r.category === catId; });
+    var done = list.filter(function (r) { return r.status === "compliant" || r.status === "not-applicable"; }).length;
+    return { total: list.length, done: done };
+  }
+
+  function taskMatches(task) {
+    if (filters.status === "open" && task.done) return false;
+    if (filters.status === "done" && !task.done) return false;
+    if (filters.priority !== "all" && task.priority !== filters.priority) return false;
+    if (filters.q) {
+      var hay = (task.text + " " + (task.area || "") + " " + (task.expectation||"") + " " + (task.build||"") + " " + (task.trigger||"") + " " + (task.tool||"")).toLowerCase();
+      if (hay.indexOf(filters.q.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+  function regMatches(r) {
+    if (regFilters.category !== "all" && r.category !== regFilters.category) return false;
+    if (regFilters.status !== "all" && r.status !== regFilters.status) return false;
+    if (regFilters.q) {
+      var hay = (r.name + " " + r.code + " " + r.description + " " + r.trigger + " " + (r.obligations || []).join(" ")).toLowerCase();
+      if (hay.indexOf(regFilters.q.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+
+  function formatUpdated(ts) {
+    if (!ts) return "not yet saved";
+    try {
+      var d = new Date(ts);
+      return "updated " + d.toLocaleDateString(undefined, { day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+    } catch (e) { return ""; }
+  }
+
+  function jumpToFramework(code) {
+    activeTab = "compliance";
+    var reg = findReg(code);
+    if (reg) { expandedRegIds[reg.id] = true; flashRegId = reg.id; }
+    render();
+    requestAnimationFrame(function () {
+      var el = document.getElementById("reg-" + code);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    setTimeout(function () { flashRegId = null; }, 50);
+  }
+
+  function render() {
+    var html = "";
+    html += '<div class="topstripe">';
+    STATE.domains.forEach(function (d) { html += '<span style="background:' + d.color + '"></span>'; });
+    html += '</div>';
+
+    var oc = overallCounts();
+    var pct = oc.total ? Math.round((oc.done / oc.total) * 100) : 0;
+    var rc = regCounts();
+    var regTotal = STATE.regulations.length;
+
+    html += '<header class="top"><div class="inner">';
+    html += '<p class="eyebrow">Portfolio Prototype · GRC Operating Model</p>';
+    html += '<div class="title-row"><h1 class="page-title">GRC Control Room</h1>';
+    html += '<span class="updated">' + esc(formatUpdated(STATE.updatedAt)) + '</span></div>';
+
+    if (activeTab === "tasks") {
+      html += '<div class="overall">';
+      html += '<div class="overall-bar"><span style="width:' + pct + '%"></span></div>';
+      html += '<span class="overall-stat"><b>' + oc.done + '</b> / ' + oc.total + ' tasks done · ' + pct + '%</span>';
+      if (oc.highOpen > 0) html += '<span class="hi-flag">⚠ ' + oc.highOpen + ' high-priority item' + (oc.highOpen === 1 ? '' : 's') + ' open</span>';
+      html += '</div>';
+    } else {
+      html += '<div class="overall"><div class="stackbar">';
+      REG_STATUS_ORDER.forEach(function (key) {
+        var n = rc[key] || 0;
+        if (n > 0) html += '<span style="width:' + (regTotal ? (n / regTotal * 100) : 0) + '%;background:' + REG_STATUS[key].color + '" title="' + REG_STATUS[key].label + ': ' + n + '"></span>';
+      });
+      html += '</div><span class="overall-stat"><b>' + (rc.compliant + rc["not-applicable"]) + '</b> / ' + regTotal + ' resolved</span></div>';
+      html += '<div class="reg-legend">';
+      REG_STATUS_ORDER.forEach(function (key) {
+        html += '<span class="sw"><i style="background:' + REG_STATUS[key].color + '"></i>' + REG_STATUS[key].label + ' (' + (rc[key] || 0) + ')</span>';
+      });
+      html += '</div>';
+    }
+
+    html += '<div class="tabbar" role="tablist">';
+    html += '<button role="tab" data-tab="tasks" aria-selected="' + (activeTab === "tasks") + '">Task Tracker <span class="cnt">' + oc.done + '/' + oc.total + '</span></button>';
+    html += '<button role="tab" data-tab="compliance" aria-selected="' + (activeTab === "compliance") + '">Regulatory Compliance <span class="cnt">' + (rc.compliant + rc["not-applicable"]) + '/' + regTotal + '</span></button>';
+    html += '</div>';
+
+    if (activeTab === "tasks") {
+      html += '<nav class="quicknav">';
+      STATE.domains.forEach(function (d) {
+        var c = domainCounts(d);
+        html += '<a href="#dom-' + d.id + '"><span class="dot" style="background:' + d.color + '"></span>' + esc(d.name) + ' <span style="font-variant-numeric:tabular-nums">' + c.done + '/' + c.total + '</span></a>';
+      });
+      html += '</nav>';
+    } else {
+      html += '<nav class="quicknav">';
+      STATE.regCategories.forEach(function (cat) {
+        var cc = categoryRegCounts(cat.id);
+        html += '<a href="#cat-' + cat.id + '"><span class="dot" style="background:' + cat.color + '"></span>' + esc(cat.name) + ' <span style="font-variant-numeric:tabular-nums">' + cc.done + '/' + cc.total + '</span></a>';
+      });
+      html += '</nav>';
+    }
+    if (localOnlyBanner()) html += localOnlyBanner();
+    html += '</div></header>';
+
+    html += '<div class="wrap">';
+    html += (activeTab === "tasks") ? renderTasksBody() : renderComplianceBody();
+    html += '<footer class="note">' + (activeTab === "tasks"
+      ? 'Portfolio prototype demonstrating a structured GRC operating model across operations, risk, third-party risk, audit, continuous monitoring, partnerships, control-owner enablement, policy, and reporting. Expand “What &amp; how” to view the intended outcome, deliverable, implementation steps, trigger, and deadline/SLA.'
+      : 'Not everything here will apply to you. Start by setting a status on each item — leave anything uncertain as “Not assessed” until you or legal confirm applicability. Framework chips on tasks in the tracker jump straight to the matching entry here.') + '</footer>';
+    html += '</div>';
+
+    app.innerHTML = html;
+    wireEvents();
+  }
+
+  function renderTasksBody() {
+    var html = '';
+    html += '<div class="toolbar">';
+    html += '<input type="search" id="search-input" placeholder="Search tasks, expectations, deliverables…" value="' + esc(filters.q) + '">';
+    html += '<div class="seg" role="group" aria-label="Status filter">';
+    ["all", "open", "done"].forEach(function (s) {
+      html += '<button data-status="' + s + '" aria-pressed="' + (filters.status === s) + '">' + (s === "all" ? "All" : s === "open" ? "Open" : "Done") + '</button>';
+    });
+    html += '</div>';
+    html += '<select id="priority-select">';
+    [["all", "All priorities"], ["high", "High priority"], ["med", "Med priority"], ["low", "Low priority"]].forEach(function (p) {
+      html += '<option value="' + p[0] + '"' + (filters.priority === p[0] ? ' selected' : '') + '>' + p[1] + '</option>';
+    });
+    html += '</select></div>';
+
+    STATE.domains.forEach(function (d) {
+      var c = domainCounts(d);
+      var visibleTasks = d.tasks.filter(taskMatches);
+      var dpct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+      html += '<section class="domain' + (c.total === 0 ? ' empty' : '') + '" id="dom-' + d.id + '" style="--domain:' + d.color + '">';
+      html += '<div class="domain-head"><div><div class="domain-name"><span class="dot" style="background:' + d.color + '"></span><h2>' + esc(d.name) + '</h2></div><p class="domain-blurb">' + esc(d.blurb) + '</p>';
+      if (d.frameworks && d.frameworks.length) {
+        html += '<div class="fw-chips">';
+        d.frameworks.forEach(function (code) { html += '<button type="button" class="fw-chip" data-jump="' + code + '">' + code + '</button>'; });
+        html += '</div>';
+      }
+      html += '</div>';
+      if (c.total > 0) {
+        html += '<div class="domain-frac"><span class="num">' + c.done + ' / ' + c.total + '</span><div class="domain-bar"><span style="width:' + dpct + '%;background:' + d.color + '"></span></div></div>';
+      }
+      html += '</div>';
+
+      html += '<ul class="tasklist" style="border-left-color:' + d.color + '">';
+      if (d.tasks.length === 0) {
+        html += '<li class="empty-note">Nothing here yet — add the first item below as new work surfaces.</li>';
+      } else if (visibleTasks.length === 0) {
+        html += '<li class="empty-note">No tasks match the current filters.</li>';
+      } else {
+        visibleTasks.forEach(function (task) {
+          var expanded = !!expandedIds[task.id];
+          html += '<li class="task-row' + (task.done ? ' done' : '') + (expanded ? ' expanded' : '') + '" data-domain="' + d.id + '" data-task="' + task.id + '">';
+          html += '<div class="task-main"><input type="checkbox" class="chk" ' + (task.done ? 'checked' : '') + ' aria-label="Mark done">';
+          html += '<div class="task-body"><div class="task-text-row"><span class="task-text" data-toggle="' + task.id + '">' + esc(task.text) + '</span>';
+          html += '<button class="del-btn" title="Remove task" aria-label="Remove task">×</button></div>';
+          html += '<div class="task-meta">';
+          if (task.area) html += '<span class="tag area">' + esc(task.area) + '</span>';
+          html += '<span class="tag prio-' + task.priority + '">' + PRIORITY_LABEL[task.priority] + '</span>';
+          html += '<span class="tag cadence">' + (CADENCE_LABEL[task.cadence] || task.cadence) + '</span>';
+          if (task.expectation) html += '<button class="expand-btn" data-toggle="' + task.id + '"><span class="chev">▸</span>' + (expanded ? 'Hide detail' : 'What & how') + '</button>';
+          html += '</div>';
+          if (expanded && task.expectation) {
+            html += '<dl class="detail"><dt>Expectation</dt><dd>' + esc(task.expectation) + '</dd>';
+            html += '<dt>What to build</dt><dd>' + esc(task.build) + '</dd>';
+            html += '<dt>Steps</dt><dd><ol>';
+            (task.steps || []).forEach(function (s) { html += '<li>' + esc(s) + '</li>'; });
+            html += '</ol></dd>';
+            html += '<div class="td-grid">';
+            if (task.trigger) html += '<div><dt>Trigger</dt><dd>' + esc(task.trigger) + '</dd></div>';
+            if (task.deadline) html += '<div><dt>Deadline / SLA</dt><dd>' + esc(task.deadline) + '</dd></div>';
+            html += '</div>';
+            if (task.tool) html += '<div class="tool-note"><span class="tool-label"><i></i>Using Anecdotes</span><p>' + esc(task.tool) + '</p></div>';
+            html += '</dl>';
+          }
+          html += '</div></div></li>';
+        });
+      }
+      html += '</ul>';
+      html += '<form class="add-row" data-domain="' + d.id + '" style="--domain:' + d.color + '">';
+      html += '<input type="text" name="text" placeholder="Add a task to this area…" required>';
+      html += '<select name="priority"><option value="med" selected>Med priority</option><option value="high">High priority</option><option value="low">Low priority</option></select>';
+      html += '<select name="cadence">';
+      ["ongoing", "weekly", "monthly", "quarterly", "annual", "adhoc"].forEach(function (cd) {
+        html += '<option value="' + cd + '"' + (cd === "ongoing" ? ' selected' : '') + '>' + CADENCE_LABEL[cd] + '</option>';
+      });
+      html += '</select><button type="submit" class="add-btn">Add</button></form>';
+      html += '</section>';
+    });
+    return html;
+  }
+
+  function renderComplianceBody() {
+    var html = '';
+    html += '<div class="toolbar">';
+    html += '<input type="search" id="reg-search-input" placeholder="Search regulations, obligations…" value="' + esc(regFilters.q) + '">';
+    html += '<select id="reg-category-select"><option value="all"' + (regFilters.category === "all" ? " selected" : "") + '>All categories</option>';
+    STATE.regCategories.forEach(function (cat) { html += '<option value="' + cat.id + '"' + (regFilters.category === cat.id ? " selected" : "") + '>' + esc(cat.name) + '</option>'; });
+    html += '</select>';
+    html += '<select id="reg-status-select"><option value="all"' + (regFilters.status === "all" ? " selected" : "") + '>All statuses</option>';
+    REG_STATUS_ORDER.forEach(function (key) { html += '<option value="' + key + '"' + (regFilters.status === key ? " selected" : "") + '>' + REG_STATUS[key].label + '</option>'; });
+    html += '</select></div>';
+
+    STATE.regCategories.forEach(function (cat) {
+      var list = STATE.regulations.filter(function (r) { return r.category === cat.id; });
+      var visible = list.filter(regMatches);
+      var cc = categoryRegCounts(cat.id);
+      html += '<section class="reg-category" id="cat-' + cat.id + '" style="--cat:' + cat.color + '">';
+      html += '<div class="reg-category-head"><span class="dot" style="background:' + cat.color + '"></span><h2>' + esc(cat.name) + '</h2><span class="reg-category-count">' + cc.done + ' / ' + cc.total + ' resolved</span></div>';
+      if (cat.platformNote) html += '<p class="cat-note">' + esc(cat.platformNote) + '</p>';
+      html += '<ul class="reg-list" style="border-left-color:' + cat.color + '">';
+      if (visible.length === 0) {
+        html += '<li class="empty-note">No items match the current filters.</li>';
+      } else {
+        visible.forEach(function (r) {
+          var expanded = !!expandedRegIds[r.id];
+          var st = REG_STATUS[r.status] || REG_STATUS["not-assessed"];
+          html += '<li class="reg-row' + (expanded ? ' expanded' : '') + (flashRegId === r.id ? ' flash' : '') + '" id="reg-' + r.code + '" data-reg="' + r.id + '" style="--cat:' + cat.color + '">';
+          html += '<div class="reg-head-row">';
+          html += '<span class="dot" style="background:' + st.color + '"></span>';
+          html += '<span class="reg-name-wrap" data-toggle-reg="' + r.id + '"><span class="reg-name">' + esc(r.name) + '</span><span class="reg-code">' + esc(r.code) + '</span></span>';
+          html += '<select class="reg-status-select" data-reg-status="' + r.id + '">';
+          REG_STATUS_ORDER.forEach(function (key) { html += '<option value="' + key + '"' + (r.status === key ? ' selected' : '') + '>' + REG_STATUS[key].label + '</option>'; });
+          html += '</select>';
+          html += '<button class="expand-btn" data-toggle-reg="' + r.id + '"><span class="chev">▸</span>' + (expanded ? 'Hide' : 'Details') + '</button>';
+          html += '</div>';
+          if (expanded) {
+            html += '<dl class="reg-detail">';
+            html += '<dd class="desc">' + esc(r.description) + '</dd>';
+            html += '<dt>Applies if…</dt><dd>' + esc(r.trigger) + '</dd>';
+            html += '<dt>What a GRC specialist needs to do</dt><dd><ul>';
+            (r.obligations || []).forEach(function (o) { html += '<li>' + esc(o) + '</li>'; });
+            html += '</ul></dd>';
+            html += '<dt>Notes</dt><dd><textarea data-reg-notes="' + r.id + '" placeholder="Applicability decision, owner, target date…">' + esc(r.notes || '') + '</textarea></dd>';
+            html += '</dl>';
+          }
+          html += '</li>';
+        });
+      }
+      html += '</ul></section>';
+    });
+    return html;
+  }
+
+  function localOnlyBanner() {
+    if (typeof localOnly !== "undefined" && localOnly) {
+      return '<p class="banner">' + BANNER_TEXT + '</p>';
+    }
+    return '';
+  }
+
+  function wireEvents() {
+    document.querySelectorAll('.tabbar button').forEach(function (btn) {
+      btn.addEventListener('click', function () { activeTab = btn.getAttribute('data-tab'); render(); });
+    });
+
+    var search = document.getElementById('search-input');
+    if (search) {
+      search.addEventListener('input', function () {
+        filters.q = search.value; var caret = search.selectionStart; render();
+        var again = document.getElementById('search-input');
+        if (again) { again.focus(); try { again.setSelectionRange(caret, caret); } catch (e) {} }
+      });
+    }
+    document.querySelectorAll('.seg button').forEach(function (btn) {
+      btn.addEventListener('click', function () { filters.status = btn.getAttribute('data-status'); render(); });
+    });
+    var psel = document.getElementById('priority-select');
+    if (psel) psel.addEventListener('change', function () { filters.priority = psel.value; render(); });
+
+    var regSearch = document.getElementById('reg-search-input');
+    if (regSearch) {
+      regSearch.addEventListener('input', function () {
+        regFilters.q = regSearch.value; var caret = regSearch.selectionStart; render();
+        var again = document.getElementById('reg-search-input');
+        if (again) { again.focus(); try { again.setSelectionRange(caret, caret); } catch (e) {} }
+      });
+    }
+    var catSel = document.getElementById('reg-category-select');
+    if (catSel) catSel.addEventListener('change', function () { regFilters.category = catSel.value; render(); });
+    var stSel = document.getElementById('reg-status-select');
+    if (stSel) stSel.addEventListener('change', function () { regFilters.status = stSel.value; render(); });
+
+    app.querySelectorAll('[data-toggle]').forEach(function (el) {
+      el.addEventListener('click', function () { var id = el.getAttribute('data-toggle'); expandedIds[id] = !expandedIds[id]; render(); });
+    });
+    app.querySelectorAll('[data-toggle-reg]').forEach(function (el) {
+      el.addEventListener('click', function () { var id = el.getAttribute('data-toggle-reg'); expandedRegIds[id] = !expandedRegIds[id]; render(); });
+    });
+    app.querySelectorAll('[data-jump]').forEach(function (el) {
+      el.addEventListener('click', function () { jumpToFramework(el.getAttribute('data-jump')); });
+    });
+
+    app.querySelectorAll('.chk').forEach(function (chk) {
+      chk.addEventListener('change', function () {
+        var row = chk.closest('.task-row');
+        var domain = findDomain(row.getAttribute('data-domain'));
+        var task = findTask(domain, row.getAttribute('data-task'));
+        if (task) mutate(function () { task.done = chk.checked; });
+      });
+    });
+    app.querySelectorAll('.del-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var row = btn.closest('.task-row');
+        var domain = findDomain(row.getAttribute('data-domain'));
+        if (!domain) return;
+        mutate(function () { domain.tasks = domain.tasks.filter(function (tk) { return tk.id !== row.getAttribute('data-task'); }); });
+      });
+    });
+    app.querySelectorAll('form.add-row').forEach(function (form) {
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var domain = findDomain(form.getAttribute('data-domain'));
+        if (!domain) return;
+        var fd = new FormData(form);
+        var text = (fd.get('text') || '').toString().trim();
+        if (!text) return;
+        var newTask = { id: domain.id + '-u' + Date.now().toString(36) + Math.floor(Math.random() * 1000), text: text, priority: fd.get('priority') || 'med', cadence: fd.get('cadence') || 'ongoing', done: false };
+        mutate(function () { domain.tasks.push(newTask); });
+      });
+    });
+
+    app.querySelectorAll('[data-reg-status]').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var reg = findReg((sel.closest('.reg-row').id || '').replace('reg-', ''));
+        if (reg) mutate(function () { reg.status = sel.value; });
+      });
+    });
+    app.querySelectorAll('[data-reg-notes]').forEach(function (ta) {
+      ta.addEventListener('change', function () {
+        var reg = findReg((ta.closest('.reg-row').id || '').replace('reg-', ''));
+        if (reg) mutate(function () { reg.notes = ta.value; });
+      });
+    });
+  }
+
+  var STORAGE_KEY = 'control-room-state-v2';
+  var BANNER_TEXT = "This browser can’t save locally — changes will only last until you reload.";
+  var localOnly = false;
+
+  (function loadSaved() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { var saved = JSON.parse(raw); if (saved && saved.domains) STATE = saved; }
+    } catch (e) { localOnly = true; }
+  })();
+
+  function mutate(fn) {
+    fn();
+    STATE.updatedAt = new Date().toISOString();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch (e) { localOnly = true; }
+    render();
+  }
+
+  render();
+
+})();
+
+</script>
+</body>
+</html>
